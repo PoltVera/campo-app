@@ -49,12 +49,38 @@
     }
     .exito { background: #d4edda; color: #155724; }
     .error { background: #f8d7da; color: #721c24; }
+    .offline { background: #fff3cd; color: #856404; }
+    #estado-conexion {
+      text-align: center;
+      padding: 6px;
+      font-size: 13px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+    .online { background: #d4edda; color: #155724; }
+    .offline-bar { background: #fff3cd; color: #856404; }
+    #lista-pendientes {
+      margin-top: 20px;
+      background: white;
+      border-radius: 6px;
+      padding: 10px;
+      display: none;
+    }
+    #lista-pendientes h3 { font-size: 14px; color: #856404; margin: 0 0 8px 0; }
+    .pendiente-item {
+      font-size: 13px;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+      color: #555;
+    }
   </style>
 </head>
 <body>
 
   <h1>🪤 Conteo de Trampas</h1>
   <p>Fundo Muto — Arequipa</p>
+
+  <div id="estado-conexion">Verificando conexión...</div>
 
   <label>Fecha</label>
   <input type="date" id="fecha">
@@ -104,16 +130,121 @@
 
   <div id="mensaje"></div>
 
-  <script>
-    const API = "https://campo-app-qau7.onrender.com";
+  <div id="lista-pendientes">
+    <h3>⏳ Registros pendientes de sincronizar</h3>
+    <div id="items-pendientes"></div>
+  </div>
 
-    // Capturar coordenadas automáticamente
+  <script>
+    const API = "";
+
+    // Registrar Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then(() => {
+        console.log('Service Worker registrado');
+      });
+    }
+
+    // Coordenadas GPS
     let lat = null, lon = null;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(pos => {
         lat = pos.coords.latitude;
         lon = pos.coords.longitude;
       });
+    }
+
+    // Mostrar estado de conexión
+    function actualizarEstado() {
+      const div = document.getElementById('estado-conexion');
+      if (navigator.onLine) {
+        div.textContent = '🟢 Conectado — los registros se enviarán directamente';
+        div.className = 'online';
+        sincronizarPendientes();
+      } else {
+        div.textContent = '🟡 Sin internet — los registros se guardarán en el celular';
+        div.className = 'offline-bar';
+      }
+      mostrarPendientes();
+    }
+
+    window.addEventListener('online', actualizarEstado);
+    window.addEventListener('offline', actualizarEstado);
+    actualizarEstado();
+
+    // IndexedDB
+    function abrirDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open('campo-app-db', 1);
+        req.onupgradeneeded = e => {
+          e.target.result.createObjectStore('pendientes', { keyPath: 'id', autoIncrement: true });
+        };
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = reject;
+      });
+    }
+
+    async function guardarPendiente(datos) {
+      const db = await abrirDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('pendientes', 'readwrite');
+        tx.objectStore('pendientes').add({ datos, timestamp: new Date().toISOString() });
+        tx.oncomplete = resolve;
+        tx.onerror = reject;
+      });
+    }
+
+    async function obtenerPendientes() {
+      const db = await abrirDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('pendientes', 'readonly');
+        const req = tx.objectStore('pendientes').getAll();
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = reject;
+      });
+    }
+
+    async function eliminarPendiente(id) {
+      const db = await abrirDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('pendientes', 'readwrite');
+        tx.objectStore('pendientes').delete(id);
+        tx.oncomplete = resolve;
+        tx.onerror = reject;
+      });
+    }
+
+    async function mostrarPendientes() {
+      const pendientes = await obtenerPendientes();
+      const div = document.getElementById('lista-pendientes');
+      const items = document.getElementById('items-pendientes');
+      if (pendientes.length === 0) {
+        div.style.display = 'none';
+        return;
+      }
+      div.style.display = 'block';
+      items.innerHTML = pendientes.map(p =>
+        `<div class="pendiente-item">📍 ${p.datos.lugar} — ${p.datos.tipo_trampa} — ${p.timestamp.slice(0,16).replace('T',' ')}</div>`
+      ).join('');
+    }
+
+    async function sincronizarPendientes() {
+      const pendientes = await obtenerPendientes();
+      for (const registro of pendientes) {
+        try {
+          const res = await fetch(`${API}/registro`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(registro.datos)
+          });
+          if (res.ok) {
+            await eliminarPendiente(registro.id);
+          }
+        } catch (e) {
+          console.log('Error sincronizando:', e);
+        }
+      }
+      mostrarPendientes();
     }
 
     async function guardarRegistro() {
@@ -141,17 +272,27 @@
         observacion
       };
 
-      try {
-        const res = await fetch(`${API}/registro`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(datos)
-        });
-        const resultado = await res.json();
-        mostrarMensaje(`✅ Registro guardado. Trampa #${resultado.numero_trampa} en ${lugar}`, 'exito');
+      if (navigator.onLine) {
+        try {
+          const res = await fetch(`${API}/registro`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+          });
+          const resultado = await res.json();
+          mostrarMensaje(`✅ Registro guardado. Trampa #${resultado.numero_trampa} en ${lugar}`, 'exito');
+          limpiarFormulario();
+        } catch (err) {
+          await guardarPendiente(datos);
+          mostrarMensaje('⚠️ Error de red. Guardado localmente, se sincronizará después.', 'offline');
+          mostrarPendientes();
+          limpiarFormulario();
+        }
+      } else {
+        await guardarPendiente(datos);
+        mostrarMensaje('🟡 Sin internet. Guardado en el celular, se sincronizará cuando haya señal.', 'offline');
+        mostrarPendientes();
         limpiarFormulario();
-      } catch (err) {
-        mostrarMensaje('❌ Error al guardar. Verifica tu conexión.', 'error');
       }
     }
 
@@ -160,7 +301,7 @@
       div.textContent = texto;
       div.className = tipo;
       div.style.display = 'block';
-      setTimeout(() => div.style.display = 'none', 4000);
+      setTimeout(() => div.style.display = 'none', 5000);
     }
 
     function limpiarFormulario() {
