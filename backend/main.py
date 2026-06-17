@@ -8,11 +8,11 @@ from datetime import date
 
 app = FastAPI()
 
-# Permitir conexiones desde la PWA
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
