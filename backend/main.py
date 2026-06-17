@@ -1,0 +1,91 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Optional
+import psycopg2
+import os
+from datetime import date
+
+app = FastAPI()
+
+# Permitir conexiones desde la PWA
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Conexión a Neon
+def get_con():
+    return psycopg2.connect(
+        host="ep-frosty-butterfly-ai2vgwrp.c-4.us-east-1.aws.neon.tech",
+        dbname="neondb",
+        user="neondb_owner",
+        password=os.getenv("DB_PASSWORD"),
+        port=5432,
+        sslmode="require"
+    )
+
+# Modelo de datos
+class RegistroTrampa(BaseModel):
+    fecha: date
+    lugar: str
+    lote: Optional[str] = None
+    tipo_trampa: str
+    machos_ceratitis: int = 0
+    hembras_ceratitis: int = 0
+    machos_anastrepha: int = 0
+    hembras_anastrepha: int = 0
+    coordenadas_lat: Optional[float] = None
+    coordenadas_lon: Optional[float] = None
+    observacion: Optional[str] = None
+
+@app.get("/")
+def inicio():
+    return {"mensaje": "Campo App API funcionando"}
+
+@app.post("/registro")
+def guardar_registro(data: RegistroTrampa):
+    con = get_con()
+    cur = con.cursor()
+
+    # Calcular número de trampa automático por lugar
+    cur.execute(
+        "SELECT COALESCE(MAX(numero_trampa), 0) + 1 FROM trampas_moscas WHERE lugar = %s AND fecha = %s",
+        (data.lugar, data.fecha)
+    )
+    numero_trampa = cur.fetchone()[0]
+
+    cur.execute("""
+        INSERT INTO trampas_moscas 
+        (fecha, lugar, lote, tipo_trampa, numero_trampa, 
+         machos_ceratitis, hembras_ceratitis, 
+         machos_anastrepha, hembras_anastrepha,
+         coordenadas_lat, coordenadas_lon, observacion)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """, (
+        data.fecha, data.lugar, data.lote, data.tipo_trampa, numero_trampa,
+        data.machos_ceratitis, data.hembras_ceratitis,
+        data.machos_anastrepha, data.hembras_anastrepha,
+        data.coordenadas_lat, data.coordenadas_lon, data.observacion
+    ))
+
+    con.commit()
+    cur.close()
+    con.close()
+
+    return {"mensaje": "Registro guardado", "numero_trampa": numero_trampa}
+
+@app.get("/trampas/{lugar}")
+def contar_trampas(lugar: str):
+    con = get_con()
+    cur = con.cursor()
+    cur.execute(
+        "SELECT COUNT(*) FROM trampas_moscas WHERE lugar = %s AND fecha = CURRENT_DATE",
+        (lugar,)
+    )
+    total = cur.fetchone()[0]
+    cur.close()
+    con.close()
+    return {"lugar": lugar, "total_trampas_hoy": total}
