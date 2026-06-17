@@ -4,11 +4,101 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campo App - Fundo Muto</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      color: #2d6a2d;
+      font-size: 22px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #333;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 14px;
+      background: #2d6a2d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    button:active {
+      background: #1f4d1f;
+    }
+  </style>
 </head>
 <body>
 
-  <h1>Campo App</h1>
-  <p>Fundo Muto — Arequipa, Perú</p>
+  <h1>🪤 Conteo de Trampas</h1>
+  <p>Fundo Muto — Arequipa</p>
+
+  <label>Fecha</label>
+  <input type="date" id="fecha">
+
+  <label>ID de Trampa</label>
+  <select id="trampa">
+    <option value="">-- Seleccionar --</option>
+    <option value="T-01">T-01</option>
+    <option value="T-02">T-02</option>
+    <option value="T-03">T-03</option>
+    <option value="T-04">T-04</option>
+    <option value="T-05">T-05</option>
+  </select>
+
+  <label>Lote</label>
+  <select id="lote">
+    <option value="">-- Seleccionar --</option>
+    <option value="Lote 1">Lote 1</option>
+    <option value="Lote 2">Lote 2</option>
+    <option value="Lote 3">Lote 3</option>
+  </select>
+
+  <label>Número de capturas</label>
+  <input type="number" id="capturas" min="0" placeholder="0">
+
+  <label>Observación (opcional)</label>
+  <textarea id="observacion" rows="3" placeholder="Notas adicionales..."></textarea>
+
+  <button onclick="guardarRegistro()">💾 Guardar Registro</button>
+
+  <script>
+    function guardarRegistro() {
+      const fecha = document.getElementById('fecha').value;
+      const trampa = document.getElementById('trampa').value;
+      const lote = document.getElementById('lote').value;
+      const capturas = document.getElementById('capturas').value;
+      const observacion = document.getElementById('observacion').value;
+
+      if (!fecha || !trampa || !lote || capturas === '') {
+        alert('Por favor completa todos los campos obligatorios.');
+        return;
+      }
+
+      const registro = { fecha, trampa, lote, capturas, observacion };
+      console.log('Registro guardado:', registro);
+      alert('✅ Registro guardado correctamente.');
+    }
+  </script>
 
 </body>
 </html>
