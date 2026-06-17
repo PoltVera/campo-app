@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 from pydantic import BaseModel
 from typing import Optional
 import psycopg2
@@ -7,21 +7,6 @@ import os
 from datetime import date
 
 app = FastAPI()
-
-# Manejar CORS manualmente
-@app.middleware("http")
-async def add_cors_headers(request: Request, call_next):
-    if request.method == "OPTIONS":
-        response = JSONResponse(content={})
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "*"
-        return response
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "*"
-    return response
 
 def get_con():
     return psycopg2.connect(
@@ -46,9 +31,10 @@ class RegistroTrampa(BaseModel):
     coordenadas_lon: Optional[float] = None
     observacion: Optional[str] = None
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def inicio():
-    return {"mensaje": "Campo App API funcionando"}
+    with open("index.html", "r") as f:
+        return f.read()
 
 @app.post("/registro")
 def guardar_registro(data: RegistroTrampa):
