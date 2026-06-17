@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional
 import psycopg2
@@ -8,15 +8,21 @@ from datetime import date
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["*"],
-)
+# Manejar CORS manualmente
+@app.middleware("http")
+async def add_cors_headers(request: Request, call_next):
+    if request.method == "OPTIONS":
+        response = JSONResponse(content={})
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+        return response
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
 
-# Conexión a Neon
 def get_con():
     return psycopg2.connect(
         host="ep-frosty-butterfly-ai2vgwrp.c-4.us-east-1.aws.neon.tech",
@@ -27,7 +33,6 @@ def get_con():
         sslmode="require"
     )
 
-# Modelo de datos
 class RegistroTrampa(BaseModel):
     fecha: date
     lugar: str
@@ -47,35 +52,38 @@ def inicio():
 
 @app.post("/registro")
 def guardar_registro(data: RegistroTrampa):
-    con = get_con()
-    cur = con.cursor()
+    try:
+        con = get_con()
+        cur = con.cursor()
 
-    # Calcular número de trampa automático por lugar
-    cur.execute(
-        "SELECT COALESCE(MAX(numero_trampa), 0) + 1 FROM trampas_moscas WHERE lugar = %s AND fecha = %s",
-        (data.lugar, data.fecha)
-    )
-    numero_trampa = cur.fetchone()[0]
+        cur.execute(
+            "SELECT COALESCE(MAX(numero_trampa), 0) + 1 FROM trampas_moscas WHERE lugar = %s AND fecha = %s",
+            (data.lugar, data.fecha)
+        )
+        numero_trampa = cur.fetchone()[0]
 
-    cur.execute("""
-        INSERT INTO trampas_moscas 
-        (fecha, lugar, lote, tipo_trampa, numero_trampa, 
-         machos_ceratitis, hembras_ceratitis, 
-         machos_anastrepha, hembras_anastrepha,
-         coordenadas_lat, coordenadas_lon, observacion)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    """, (
-        data.fecha, data.lugar, data.lote, data.tipo_trampa, numero_trampa,
-        data.machos_ceratitis, data.hembras_ceratitis,
-        data.machos_anastrepha, data.hembras_anastrepha,
-        data.coordenadas_lat, data.coordenadas_lon, data.observacion
-    ))
+        cur.execute("""
+            INSERT INTO trampas_moscas 
+            (fecha, lugar, lote, tipo_trampa, numero_trampa, 
+             machos_ceratitis, hembras_ceratitis, 
+             machos_anastrepha, hembras_anastrepha,
+             coordenadas_lat, coordenadas_lon, observacion)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            data.fecha, data.lugar, data.lote, data.tipo_trampa, numero_trampa,
+            data.machos_ceratitis, data.hembras_ceratitis,
+            data.machos_anastrepha, data.hembras_anastrepha,
+            data.coordenadas_lat, data.coordenadas_lon, data.observacion
+        ))
 
-    con.commit()
-    cur.close()
-    con.close()
+        con.commit()
+        cur.close()
+        con.close()
 
-    return {"mensaje": "Registro guardado", "numero_trampa": numero_trampa}
+        return {"mensaje": "Registro guardado", "numero_trampa": numero_trampa}
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.get("/trampas/{lugar}")
 def contar_trampas(lugar: str):
