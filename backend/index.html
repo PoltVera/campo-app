@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgroMonitor — Trampas</title>
+  <title>América Monitor</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -259,10 +259,10 @@
 <body>
 
 <header>
-  <span class="header-icon">🪤</span>
-  <h1>AgroMonitor</h1>
+  <span class="header-icon">🪰</span>
+  <h1>América Monitor</h1>
   <p>Fundo Muto — Arequipa, Perú</p>
-  <span class="header-badge">🦟 Monitoreo de Moscas y Plagas</span>
+  <span class="header-badge">🌿 Monitoreo de Moscas y Plagas</span>
 </header>
 
 <div id="estado-conexion">Verificando conexión...</div>
@@ -352,8 +352,11 @@
 <script>
   const API = "https://campo-app-qau7.onrender.com";
 
-  // GPS
+  // Variables globales
   let lat = null, lon = null;
+  let sincronizando = false;   // candado para evitar sincronización doble
+
+  // GPS
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos => {
       lat = pos.coords.latitude;
@@ -461,24 +464,31 @@
   }
 
   async function sincronizarPendientes() {
-    const pendientes = await obtenerPendientes();
-    if (pendientes.length === 0) return;
-    let sincronizados = 0;
-    for (const registro of pendientes) {
-      try {
-        const resultado = await enviarXHR(registro.datos);
-        if (resultado) {
-          await eliminarPendiente(registro.id);
-          sincronizados++;
+    if (sincronizando) return;   // si ya está sincronizando, no empezar de nuevo
+    sincronizando = true;
+    try {
+      const pendientes = await obtenerPendientes();
+      if (pendientes.length === 0) return;
+      let sincronizados = 0;
+      for (const registro of pendientes) {
+        try {
+          const resultado = await enviarXHR(registro.datos);
+          if (resultado) {
+            await eliminarPendiente(registro.id);
+            sincronizados++;
+          }
+        } catch (e) {
+          console.log('Sin internet aún:', e);
+          break;   // si falla uno, detener para no seguir sin red
         }
-      } catch (e) {
-        console.log('Sin internet aún:', e);
       }
+      if (sincronizados > 0) {
+        mostrarMensaje(`✅ ${sincronizados} registro(s) sincronizados`, 'exito');
+      }
+      mostrarPendientes();
+    } finally {
+      sincronizando = false;   // liberar el candado siempre
     }
-    if (sincronizados > 0) {
-      mostrarMensaje(`✅ ${sincronizados} registro(s) sincronizados`, 'exito');
-    }
-    mostrarPendientes();
   }
 
   async function guardarRegistro() {
