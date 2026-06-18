@@ -6,254 +6,106 @@
   <title>América Monitor</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f0f4f0;
-      min-height: 100vh;
-    }
-
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f0; min-height: 100vh; }
     header {
       background: linear-gradient(160deg, #0f3d0f 0%, #1a6b1a 50%, #2d9e2d 100%);
-      color: white;
-      padding: 28px 20px 22px;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      position: relative;
-      overflow: hidden;
+      color: white; padding: 28px 20px 22px; text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3); position: relative; overflow: hidden;
     }
-
     header::before {
-      content: '';
-      position: absolute;
-      top: -30px; right: -30px;
-      width: 120px; height: 120px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 50%;
+      content: ''; position: absolute; top: -30px; right: -30px;
+      width: 120px; height: 120px; background: rgba(255,255,255,0.05); border-radius: 50%;
     }
-
     header::after {
-      content: '';
-      position: absolute;
-      bottom: -40px; left: -20px;
-      width: 150px; height: 150px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 50%;
+      content: ''; position: absolute; bottom: -40px; left: -20px;
+      width: 150px; height: 150px; background: rgba(255,255,255,0.04); border-radius: 50%;
     }
-
-    .header-icon {
-      font-size: 40px;
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    header h1 {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    header p {
-      font-size: 12px;
-      opacity: 0.75;
-      margin-top: 4px;
-      letter-spacing: 0.5px;
-    }
-
+    .header-icon { font-size: 40px; margin-bottom: 6px; display: block; }
+    header h1 { font-size: 22px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+    header p { font-size: 12px; opacity: 0.75; margin-top: 4px; letter-spacing: 0.5px; }
     .header-badge {
-      display: inline-block;
-      margin-top: 10px;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 20px;
-      padding: 4px 14px;
-      font-size: 11px;
-      letter-spacing: 0.5px;
+      display: inline-block; margin-top: 10px;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px; padding: 4px 14px; font-size: 11px; letter-spacing: 0.5px;
     }
-
-    #estado-conexion {
-      text-align: center;
-      padding: 9px;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-    }
+    #estado-conexion { text-align: center; padding: 9px; font-size: 13px; font-weight: 600; }
     .online { background: #d4edda; color: #155724; }
     .offline-bar { background: #fff3cd; color: #856404; }
-
-    .form-container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-
+    .form-container { max-width: 480px; margin: 0 auto; padding: 16px; }
     .card {
-      background: white;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      background: white; border-radius: 14px; padding: 20px;
+      margin-bottom: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.07);
       border-left: 4px solid #2d9e2d;
     }
-
     .card-title {
-      font-size: 12px;
-      font-weight: 800;
-      color: #1a6b1a;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 14px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #e8f5e8;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 12px; font-weight: 800; color: #1a6b1a;
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #e8f5e8;
+      display: flex; align-items: center; gap: 6px;
     }
-
     label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      color: #555;
-      margin-bottom: 5px;
-      margin-top: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
+      display: block; font-size: 12px; font-weight: 700; color: #555;
+      margin-bottom: 5px; margin-top: 13px;
+      text-transform: uppercase; letter-spacing: 0.4px;
     }
-
     label:first-of-type { margin-top: 0; }
-
     input, select, textarea {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 15px;
-      color: #333;
-      background: #fafafa;
-      transition: all 0.2s;
+      width: 100%; padding: 12px 14px; border: 1.5px solid #e0e0e0;
+      border-radius: 8px; font-size: 15px; color: #333;
+      background: #fafafa; transition: all 0.2s;
     }
-
     input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #2d9e2d;
-      background: white;
+      outline: none; border-color: #2d9e2d; background: white;
       box-shadow: 0 0 0 3px rgba(45,158,45,0.1);
     }
-
-    .conteo-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+    .especie-card {
+      background: #f5f9f5; border-radius: 10px; padding: 14px;
+      margin-bottom: 10px; border: 1px solid #e0ede0;
     }
-
-    .conteo-item label {
-      font-size: 11px;
-      color: #777;
-      margin-top: 0;
+    .especie-nombre {
+      font-size: 13px; font-weight: 700; color: #444;
+      margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
     }
-
-    .especie-header {
-      font-size: 13px;
-      font-weight: 700;
-      color: #444;
-      margin: 14px 0 10px 0;
-      padding: 8px 12px;
-      background: #f5f9f5;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid #e0ede0;
-    }
-
+    .conteo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .conteo-item label { font-size: 11px; color: #777; margin-top: 0; }
     .btn-guardar {
-      width: 100%;
-      padding: 17px;
+      width: 100%; padding: 17px;
       background: linear-gradient(135deg, #0f3d0f, #2d9e2d);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+      color: white; border: none; border-radius: 12px;
+      font-size: 16px; font-weight: 800; cursor: pointer;
+      letter-spacing: 1px; text-transform: uppercase;
       box-shadow: 0 6px 16px rgba(45,158,45,0.35);
-      transition: transform 0.1s, box-shadow 0.1s;
-      margin-bottom: 4px;
+      transition: transform 0.1s; margin-bottom: 4px;
     }
-
-    .btn-guardar:active {
-      transform: scale(0.97);
-      box-shadow: 0 3px 8px rgba(45,158,45,0.25);
-    }
-
+    .btn-guardar:active { transform: scale(0.97); }
     #mensaje {
-      margin-top: 12px;
-      padding: 13px;
-      border-radius: 10px;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 600;
-      display: none;
+      margin-top: 12px; padding: 13px; border-radius: 10px;
+      text-align: center; font-size: 14px; font-weight: 600; display: none;
     }
-
     .exito  { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .error  { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     .offline { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-
     #lista-pendientes {
-      background: white;
-      border-radius: 14px;
-      padding: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-      display: none;
-      border-left: 4px solid #856404;
-      margin-top: 14px;
+      background: white; border-radius: 14px; padding: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07); display: none;
+      border-left: 4px solid #856404; margin-top: 14px;
     }
-
     #lista-pendientes h3 {
-      font-size: 12px;
-      font-weight: 800;
-      color: #856404;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 12px; font-weight: 800; color: #856404;
+      margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;
     }
-
     .pendiente-item {
-      font-size: 13px;
-      padding: 8px 0;
-      border-bottom: 1px solid #f5f5f5;
-      color: #666;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 13px; padding: 8px 0; border-bottom: 1px solid #f5f5f5;
+      color: #666; display: flex; align-items: center; gap: 8px;
     }
-
     .btn-sync {
-      width: 100%;
-      margin-top: 12px;
-      padding: 11px;
-      background: #856404;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      width: 100%; margin-top: 12px; padding: 11px; background: #856404;
+      color: white; border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      text-transform: uppercase; letter-spacing: 0.5px;
     }
-
-    .gps-badge {
-      font-size: 11px;
-      color: #2d9e2d;
-      margin-top: 6px;
-      font-weight: 600;
-    }
+    .gps-badge { font-size: 11px; color: #2d9e2d; margin-top: 6px; font-weight: 600; }
+    #cargando { text-align: center; padding: 40px; color: #666; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -267,78 +119,34 @@
 
 <div id="estado-conexion">Verificando conexión...</div>
 
-<div class="form-container">
+<div id="cargando">⏳ Cargando listas...</div>
+
+<div class="form-container" id="formulario" style="display:none;">
 
   <div class="card">
     <div class="card-title">📋 Información General</div>
-
     <label>Fecha</label>
     <input type="date" id="fecha">
-
     <label>Lugar</label>
-    <select id="lugar">
-      <option value="">— Seleccionar lugar —</option>
-      <option value="F.AGROPEL">F.AGROPEL</option>
-      <option value="F.ZEGARRA">F.ZEGARRA</option>
-      <option value="F.SANTA GABRIELA">F.SANTA GABRIELA</option>
-      <option value="SALAS">SALAS</option>
-      <option value="FAA 1-4">FAA 1-4</option>
-      <option value="HUERTO CASA">HUERTO CASA</option>
-      <option value="UCHAS">UCHAS</option>
-      <option value="FAA 5-6">FAA 5-6</option>
-      <option value="FAA PERIMETROS">FAA PERIMETROS</option>
-    </select>
-
+    <select id="lugar"><option value="">— Seleccionar lugar —</option></select>
     <label>Lote (referencia)</label>
     <input type="text" id="lote" placeholder="Ej. Lote A, Sector 2...">
-
     <label>Tipo de Trampa</label>
-    <select id="tipo_trampa">
-      <option value="">— Seleccionar tipo —</option>
-      <option value="L.TORULA">L.TORULA</option>
-      <option value="JACKSON">JACKSON</option>
-      <option value="MIXTAS">MIXTAS</option>
-      <option value="GF-120">GF-120</option>
-    </select>
-
+    <select id="tipo_trampa"><option value="">— Seleccionar tipo —</option></select>
     <div class="gps-badge" id="gps-status">📍 Obteniendo ubicación GPS...</div>
   </div>
 
   <div class="card">
     <div class="card-title">🦟 Conteo de Individuos</div>
-
-    <div class="especie-header">🔴 Ceratitis capitata</div>
-    <div class="conteo-grid">
-      <div class="conteo-item">
-        <label>♂ Machos</label>
-        <input type="number" id="machos_ceratitis" min="0" value="0">
-      </div>
-      <div class="conteo-item">
-        <label>♀ Hembras</label>
-        <input type="number" id="hembras_ceratitis" min="0" value="0">
-      </div>
-    </div>
-
-    <div class="especie-header">🟠 Anastrepha spp.</div>
-    <div class="conteo-grid">
-      <div class="conteo-item">
-        <label>♂ Machos</label>
-        <input type="number" id="machos_anastrepha" min="0" value="0">
-      </div>
-      <div class="conteo-item">
-        <label>♀ Hembras</label>
-        <input type="number" id="hembras_anastrepha" min="0" value="0">
-      </div>
-    </div>
+    <div id="especies-container"></div>
   </div>
 
   <div class="card">
     <div class="card-title">📝 Observaciones</div>
-    <textarea id="observacion" rows="3" placeholder="Notas adicionales, condiciones del campo..."></textarea>
+    <textarea id="observacion" rows="3" placeholder="Notas adicionales..."></textarea>
   </div>
 
   <button class="btn-guardar" onclick="guardarRegistro()">💾 Guardar Registro</button>
-
   <div id="mensaje"></div>
 
   <div id="lista-pendientes">
@@ -351,10 +159,9 @@
 
 <script>
   const API = "https://campo-app-qau7.onrender.com";
-
-  // Variables globales
   let lat = null, lon = null;
-  let sincronizando = false;   // candado para evitar sincronización doble
+  let sincronizando = false;
+  let especiesActivas = [];
 
   // GPS
   if (navigator.geolocation) {
@@ -367,8 +174,59 @@
     });
   }
 
-  // Fecha de hoy por defecto
   document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+
+  // Cargar listas dinámicas desde Neon
+  async function cargarListas() {
+    try {
+      const [rLugares, rTipos, rEspecies] = await Promise.all([
+        fetch(`${API}/lugares`).then(r => r.json()),
+        fetch(`${API}/tipos_trampa`).then(r => r.json()),
+        fetch(`${API}/especies`).then(r => r.json())
+      ]);
+
+      // Llenar lugares
+      const selLugar = document.getElementById('lugar');
+      rLugares.lugares.forEach(l => {
+        const opt = document.createElement('option');
+        opt.value = l; opt.textContent = l;
+        selLugar.appendChild(opt);
+      });
+
+      // Llenar tipos de trampa
+      const selTipo = document.getElementById('tipo_trampa');
+      rTipos.tipos_trampa.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t; opt.textContent = t;
+        selTipo.appendChild(opt);
+      });
+
+      // Llenar especies dinámicamente
+      especiesActivas = rEspecies.especies;
+      const contenedor = document.getElementById('especies-container');
+      contenedor.innerHTML = especiesActivas.map((esp, i) => `
+        <div class="especie-card">
+          <div class="especie-nombre">🔵 ${esp}</div>
+          <div class="conteo-grid">
+            <div class="conteo-item">
+              <label>♂ Machos</label>
+              <input type="number" id="machos_${i}" min="0" value="0">
+            </div>
+            <div class="conteo-item">
+              <label>♀ Hembras</label>
+              <input type="number" id="hembras_${i}" min="0" value="0">
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('cargando').style.display = 'none';
+      document.getElementById('formulario').style.display = 'block';
+
+    } catch(e) {
+      document.getElementById('cargando').textContent = '⚠️ Error cargando listas. Verifica tu conexión.';
+    }
+  }
 
   // Estado de conexión
   function actualizarEstado() {
@@ -387,6 +245,7 @@
   window.addEventListener('online', actualizarEstado);
   window.addEventListener('offline', actualizarEstado);
   actualizarEstado();
+  cargarListas();
 
   // IndexedDB
   function abrirDB() {
@@ -405,8 +264,7 @@
     return new Promise((resolve, reject) => {
       const tx = db.transaction('pendientes', 'readwrite');
       tx.objectStore('pendientes').add({ datos, timestamp: new Date().toISOString() });
-      tx.oncomplete = resolve;
-      tx.onerror = reject;
+      tx.oncomplete = resolve; tx.onerror = reject;
     });
   }
 
@@ -415,8 +273,7 @@
     return new Promise((resolve, reject) => {
       const tx = db.transaction('pendientes', 'readonly');
       const req = tx.objectStore('pendientes').getAll();
-      req.onsuccess = e => resolve(e.target.result);
-      req.onerror = reject;
+      req.onsuccess = e => resolve(e.target.result); req.onerror = reject;
     });
   }
 
@@ -425,8 +282,7 @@
     return new Promise((resolve, reject) => {
       const tx = db.transaction('pendientes', 'readwrite');
       tx.objectStore('pendientes').delete(id);
-      tx.oncomplete = resolve;
-      tx.onerror = reject;
+      tx.oncomplete = resolve; tx.onerror = reject;
     });
   }
 
@@ -434,10 +290,7 @@
     const pendientes = await obtenerPendientes();
     const div = document.getElementById('lista-pendientes');
     const items = document.getElementById('items-pendientes');
-    if (pendientes.length === 0) {
-      div.style.display = 'none';
-      return;
-    }
+    if (pendientes.length === 0) { div.style.display = 'none'; return; }
     div.style.display = 'block';
     items.innerHTML = pendientes.map(p =>
       `<div class="pendiente-item">⏳ ${p.datos.lugar} — ${p.datos.tipo_trampa} — ${p.timestamp.slice(0,16).replace('T',' ')}</div>`
@@ -451,20 +304,17 @@
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.timeout = 15000;
       xhr.onload = function() {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(JSON.parse(xhr.responseText));
-        } else {
-          reject(new Error(`Error servidor: ${xhr.status}`));
-        }
+        if (xhr.status >= 200 && xhr.status < 300) resolve(JSON.parse(xhr.responseText));
+        else reject(new Error(`Error servidor: ${xhr.status}`));
       };
       xhr.onerror = function() { reject(new Error('Error de red')); };
-      xhr.ontimeout = function() { reject(new Error('Timeout — servidor tardó demasiado')); };
+      xhr.ontimeout = function() { reject(new Error('Timeout')); };
       xhr.send(JSON.stringify(datos));
     });
   }
 
   async function sincronizarPendientes() {
-    if (sincronizando) return;   // si ya está sincronizando, no empezar de nuevo
+    if (sincronizando) return;
     sincronizando = true;
     try {
       const pendientes = await obtenerPendientes();
@@ -473,21 +323,13 @@
       for (const registro of pendientes) {
         try {
           const resultado = await enviarXHR(registro.datos);
-          if (resultado) {
-            await eliminarPendiente(registro.id);
-            sincronizados++;
-          }
-        } catch (e) {
-          console.log('Sin internet aún:', e);
-          break;   // si falla uno, detener para no seguir sin red
-        }
+          if (resultado) { await eliminarPendiente(registro.id); sincronizados++; }
+        } catch (e) { break; }
       }
-      if (sincronizados > 0) {
-        mostrarMensaje(`✅ ${sincronizados} registro(s) sincronizados`, 'exito');
-      }
+      if (sincronizados > 0) mostrarMensaje(`✅ ${sincronizados} registro(s) sincronizados`, 'exito');
       mostrarPendientes();
     } finally {
-      sincronizando = false;   // liberar el candado siempre
+      sincronizando = false;
     }
   }
 
@@ -496,10 +338,6 @@
     const lugar = document.getElementById('lugar').value;
     const lote = document.getElementById('lote').value;
     const tipo_trampa = document.getElementById('tipo_trampa').value;
-    const machos_ceratitis = parseInt(document.getElementById('machos_ceratitis').value) || 0;
-    const hembras_ceratitis = parseInt(document.getElementById('hembras_ceratitis').value) || 0;
-    const machos_anastrepha = parseInt(document.getElementById('machos_anastrepha').value) || 0;
-    const hembras_anastrepha = parseInt(document.getElementById('hembras_anastrepha').value) || 0;
     const observacion = document.getElementById('observacion').value;
 
     if (!fecha || !lugar || !tipo_trampa) {
@@ -507,13 +345,18 @@
       return;
     }
 
+    // Construir capturas dinámicamente por especie
+    const capturas = {};
+    especiesActivas.forEach((esp, i) => {
+      capturas[esp] = {
+        machos: parseInt(document.getElementById(`machos_${i}`).value) || 0,
+        hembras: parseInt(document.getElementById(`hembras_${i}`).value) || 0
+      };
+    });
+
     const datos = {
-      fecha, lugar, lote, tipo_trampa,
-      machos_ceratitis, hembras_ceratitis,
-      machos_anastrepha, hembras_anastrepha,
-      coordenadas_lat: lat,
-      coordenadas_lon: lon,
-      observacion
+      fecha, lugar, lote, tipo_trampa, capturas,
+      coordenadas_lat: lat, coordenadas_lon: lon, observacion
     };
 
     if (navigator.onLine) {
@@ -530,7 +373,7 @@
       }
     } else {
       await guardarPendiente(datos);
-      mostrarMensaje('🟡 Sin internet. Guardado localmente, se sincronizará al conectarte.', 'offline');
+      mostrarMensaje('🟡 Sin internet. Guardado localmente.', 'offline');
       mostrarPendientes();
       limpiarFormulario();
     }
@@ -538,9 +381,7 @@
 
   function mostrarMensaje(texto, tipo) {
     const div = document.getElementById('mensaje');
-    div.textContent = texto;
-    div.className = tipo;
-    div.style.display = 'block';
+    div.textContent = texto; div.className = tipo; div.style.display = 'block';
     setTimeout(() => div.style.display = 'none', 6000);
   }
 
@@ -548,12 +389,12 @@
     document.getElementById('lugar').value = '';
     document.getElementById('lote').value = '';
     document.getElementById('tipo_trampa').value = '';
-    document.getElementById('machos_ceratitis').value = 0;
-    document.getElementById('hembras_ceratitis').value = 0;
-    document.getElementById('machos_anastrepha').value = 0;
-    document.getElementById('hembras_anastrepha').value = 0;
     document.getElementById('observacion').value = '';
     document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+    especiesActivas.forEach((_, i) => {
+      document.getElementById(`machos_${i}`).value = 0;
+      document.getElementById(`hembras_${i}`).value = 0;
+    });
   }
 </script>
 
