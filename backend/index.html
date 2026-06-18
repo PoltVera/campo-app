@@ -116,6 +116,11 @@
   <h1>América Monitor</h1>
   <p>Fundo Muto — Arequipa, Perú</p>
   <span class="header-badge">🌿 Monitoreo de Moscas y Plagas</span>
+  <div style="margin-top:12px;">
+    <button onclick="actualizarListas()" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.35); color:white; padding:7px 16px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer;">
+      🔄 Actualizar listas
+    </button>
+  </div>
 </header>
 
 <div id="estado-conexion">Verificando conexión...</div>
@@ -218,6 +223,31 @@
     document.getElementById('formulario').style.display = 'block';
   }
 
+async function actualizarListas() {
+    if (!navigator.onLine) {
+      mostrarMensaje('🟡 Sin internet. No se pueden actualizar las listas ahora.', 'offline');
+      return;
+    }
+    mostrarMensaje('🔄 Actualizando listas...', 'offline');
+    try {
+      const [rLugares, rTipos, rEspecies] = await Promise.all([
+        fetch(`${API}/lugares`).then(r => r.json()),
+        fetch(`${API}/tipos_trampa`).then(r => r.json()),
+        fetch(`${API}/especies`).then(r => r.json())
+      ]);
+      const lugares = rLugares.lugares;
+      const tipos = rTipos.tipos_trampa;
+      const especies = rEspecies.especies;
+      localStorage.setItem('cache_listas', JSON.stringify({
+        lugares, tipos, especies, fecha: new Date().toISOString()
+      }));
+      pintarListas(lugares, tipos, especies);
+      document.getElementById('cache-info').textContent = '✅ Listas actualizadas desde el servidor';
+      mostrarMensaje('✅ Listas actualizadas correctamente', 'exito');
+    } catch (e) {
+      mostrarMensaje('⚠️ No se pudieron actualizar las listas.', 'error');
+    }
+  }
   async function cargarListas() {
     // 1. Intentar desde el servidor (si hay internet)
     try {
