@@ -6,133 +6,63 @@
   <title>América Monitor — Admin</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f0f4f0;
-      min-height: 100vh;
-    }
-
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f0; min-height: 100vh; }
     header {
       background: linear-gradient(160deg, #0f3d0f 0%, #1a6b1a 50%, #2d9e2d 100%);
-      color: white;
-      padding: 20px;
-      text-align: center;
+      color: white; padding: 20px; text-align: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-
     header h1 { font-size: 20px; font-weight: 800; letter-spacing: 2px; }
     header p { font-size: 12px; opacity: 0.75; margin-top: 4px; }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
+    .container { max-width: 800px; margin: 0 auto; padding: 20px; }
     .login-card {
-      background: white;
-      border-radius: 14px;
-      padding: 30px;
-      margin: 30px auto;
-      max-width: 400px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      text-align: center;
+      background: white; border-radius: 14px; padding: 30px;
+      margin: 30px auto; max-width: 400px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center;
     }
-
     .login-card h2 { color: #1a6b1a; margin-bottom: 20px; }
-
     .card {
-      background: white;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      background: white; border-radius: 14px; padding: 20px;
+      margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07);
       border-left: 4px solid #2d9e2d;
     }
-
     .card-title {
-      font-size: 14px;
-      font-weight: 800;
-      color: #1a6b1a;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
+      font-size: 14px; font-weight: 800; color: #1a6b1a;
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 16px; padding-bottom: 8px;
       border-bottom: 1px solid #e8f5e8;
     }
-
     input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 11px 14px;
-      border: 1.5px solid #ddd;
-      border-radius: 8px;
-      font-size: 15px;
-      margin-bottom: 10px;
+      width: 100%; padding: 11px 14px; border: 1.5px solid #ddd;
+      border-radius: 8px; font-size: 15px; margin-bottom: 10px;
     }
-
-    input:focus {
-      outline: none;
-      border-color: #2d9e2d;
-    }
-
+    input:focus { outline: none; border-color: #2d9e2d; }
     .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.1s;
+      padding: 10px 20px; border: none; border-radius: 8px;
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: transform 0.1s;
     }
-
     .btn:active { transform: scale(0.97); }
     .btn-green { background: #2d9e2d; color: white; width: 100%; padding: 13px; }
     .btn-add { background: #2d9e2d; color: white; }
     .btn-toggle-on { background: #fff3cd; color: #856404; font-size: 12px; padding: 6px 12px; }
     .btn-toggle-off { background: #d4edda; color: #155724; font-size: 12px; padding: 6px 12px; }
-
-    .add-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
+    .btn-delete { background: #f8d7da; color: #721c24; font-size: 12px; padding: 6px 12px; }
+    .add-row { display: flex; gap: 10px; margin-bottom: 16px; }
     .add-row input { margin-bottom: 0; flex: 1; }
-
     .item-list { display: flex; flex-direction: column; gap: 8px; }
-
     .item-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 14px;
-      background: #f9f9f9;
-      border-radius: 8px;
-      border: 1px solid #eee;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; background: #f9f9f9;
+      border-radius: 8px; border: 1px solid #eee;
     }
-
-    .item-name {
-      font-weight: 600;
-      font-size: 14px;
-      color: #333;
-    }
-
+    .item-name { font-weight: 600; font-size: 14px; color: #333; }
     .item-inactivo { opacity: 0.5; text-decoration: line-through; }
-
     #mensaje-admin {
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      display: none;
+      padding: 12px; border-radius: 8px; text-align: center;
+      font-size: 14px; font-weight: 600; margin-bottom: 16px; display: none;
     }
-
     .exito { background: #d4edda; color: #155724; }
     .error { background: #f8d7da; color: #721c24; }
-
     #panel { display: none; }
     #login { display: block; }
   </style>
@@ -146,7 +76,6 @@
 
 <div class="container">
 
-  <!-- LOGIN -->
   <div id="login" class="login-card">
     <h2>🔐 Acceso Admin</h2>
     <input type="password" id="password-input" placeholder="Contraseña de administrador">
@@ -154,7 +83,6 @@
     <div id="login-error" style="color:#721c24; margin-top:10px; font-size:13px;"></div>
   </div>
 
-  <!-- PANEL PRINCIPAL -->
   <div id="panel">
 
     <div id="mensaje-admin"></div>
@@ -179,15 +107,24 @@
       <div class="item-list" id="lista-tipos"></div>
     </div>
 
-  </div>
+    <!-- ESPECIES -->
+    <div class="card">
+      <div class="card-title">🦟 Especies</div>
+      <div class="add-row">
+        <input type="text" id="nueva-especie" placeholder="Nombre de la especie...">
+        <button class="btn btn-add" onclick="agregarEspecie()">+ Agregar</button>
+      </div>
+      <div class="item-list" id="lista-especies"></div>
+    </div>
 
+  </div>
 </div>
 
 <script>
   const API = "https://campo-app-qau7.onrender.com";
   let password = "";
 
- function verificarPassword() {
+  function verificarPassword() {
     const input = document.getElementById('password-input').value;
     if (!input) return;
     password = input;
@@ -202,6 +139,7 @@
       .then(data => {
         renderLugares(data.lugares);
         renderTipos(data.tipos_trampa);
+        renderEspecies(data.especies);
       });
   }
 
@@ -210,10 +148,12 @@
     lista.innerHTML = lugares.map(l => `
       <div class="item-row">
         <span class="item-name ${!l.activo ? 'item-inactivo' : ''}">${l.nombre}</span>
-        <button class="btn ${l.activo ? 'btn-toggle-on' : 'btn-toggle-off'}"
-          onclick="toggleLugar(${l.id})">
-          ${l.activo ? '⏸ Desactivar' : '▶ Activar'}
-        </button>
+        <div style="display:flex; gap:6px;">
+          <button class="btn ${l.activo ? 'btn-toggle-on' : 'btn-toggle-off'}" onclick="toggleLugar(${l.id})">
+            ${l.activo ? '⏸ Desactivar' : '▶ Activar'}
+          </button>
+          <button class="btn btn-delete" onclick="eliminarLugar(${l.id})">🗑 Eliminar</button>
+        </div>
       </div>
     `).join('');
   }
@@ -223,10 +163,27 @@
     lista.innerHTML = tipos.map(t => `
       <div class="item-row">
         <span class="item-name ${!t.activo ? 'item-inactivo' : ''}">${t.nombre}</span>
-        <button class="btn ${t.activo ? 'btn-toggle-on' : 'btn-toggle-off'}"
-          onclick="toggleTipo(${t.id})">
-          ${t.activo ? '⏸ Desactivar' : '▶ Activar'}
-        </button>
+        <div style="display:flex; gap:6px;">
+          <button class="btn ${t.activo ? 'btn-toggle-on' : 'btn-toggle-off'}" onclick="toggleTipo(${t.id})">
+            ${t.activo ? '⏸ Desactivar' : '▶ Activar'}
+          </button>
+          <button class="btn btn-delete" onclick="eliminarTipo(${t.id})">🗑 Eliminar</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderEspecies(especies) {
+    const lista = document.getElementById('lista-especies');
+    lista.innerHTML = especies.map(e => `
+      <div class="item-row">
+        <span class="item-name ${!e.activo ? 'item-inactivo' : ''}">${e.nombre}</span>
+        <div style="display:flex; gap:6px;">
+          <button class="btn ${e.activo ? 'btn-toggle-on' : 'btn-toggle-off'}" onclick="toggleEspecie(${e.id})">
+            ${e.activo ? '⏸ Desactivar' : '▶ Activar'}
+          </button>
+          <button class="btn btn-delete" onclick="eliminarEspecie(${e.id})">🗑 Eliminar</button>
+        </div>
       </div>
     `).join('');
   }
@@ -235,69 +192,80 @@
     const nombre = document.getElementById('nuevo-lugar').value.trim();
     if (!nombre) return;
     const res = await fetch(`${API}/admin/lugar`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre, password })
     });
     const data = await res.json();
-    if (res.ok) {
-      mostrarMensaje('✅ Lugar agregado correctamente', 'exito');
-      document.getElementById('nuevo-lugar').value = '';
-      cargarDatos();
-    } else {
-      mostrarMensaje(`❌ ${data.error}`, 'error');
-    }
+    if (res.ok) { mostrarMensaje('✅ Lugar agregado', 'exito'); document.getElementById('nuevo-lugar').value = ''; cargarDatos(); }
+    else mostrarMensaje(`❌ ${data.error}`, 'error');
   }
 
   async function agregarTipo() {
     const nombre = document.getElementById('nuevo-tipo').value.trim();
     if (!nombre) return;
     const res = await fetch(`${API}/admin/tipo_trampa`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre, password })
     });
     const data = await res.json();
-    if (res.ok) {
-      mostrarMensaje('✅ Tipo de trampa agregado', 'exito');
-      document.getElementById('nuevo-tipo').value = '';
-      cargarDatos();
-    } else {
-      mostrarMensaje(`❌ ${data.error}`, 'error');
-    }
+    if (res.ok) { mostrarMensaje('✅ Tipo agregado', 'exito'); document.getElementById('nuevo-tipo').value = ''; cargarDatos(); }
+    else mostrarMensaje(`❌ ${data.error}`, 'error');
+  }
+
+  async function agregarEspecie() {
+    const nombre = document.getElementById('nueva-especie').value.trim();
+    if (!nombre) return;
+    const res = await fetch(`${API}/admin/especie`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, password })
+    });
+    const data = await res.json();
+    if (res.ok) { mostrarMensaje('✅ Especie agregada', 'exito'); document.getElementById('nueva-especie').value = ''; cargarDatos(); }
+    else mostrarMensaje(`❌ ${data.error}`, 'error');
   }
 
   async function toggleLugar(id) {
-    await fetch(`${API}/admin/lugar/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password })
-    });
+    await fetch(`${API}/admin/lugar/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
     cargarDatos();
   }
 
   async function toggleTipo(id) {
-    await fetch(`${API}/admin/tipo_trampa/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password })
-    });
+    await fetch(`${API}/admin/tipo_trampa/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
     cargarDatos();
+  }
+
+  async function toggleEspecie(id) {
+    await fetch(`${API}/admin/especie/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+    cargarDatos();
+  }
+
+  async function eliminarLugar(id) {
+    if (!confirm('¿Seguro que quieres eliminar este lugar?')) return;
+    await fetch(`${API}/admin/lugar/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+    mostrarMensaje('✅ Lugar eliminado', 'exito'); cargarDatos();
+  }
+
+  async function eliminarTipo(id) {
+    if (!confirm('¿Seguro que quieres eliminar este tipo?')) return;
+    await fetch(`${API}/admin/tipo_trampa/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+    mostrarMensaje('✅ Tipo eliminado', 'exito'); cargarDatos();
+  }
+
+  async function eliminarEspecie(id) {
+    if (!confirm('¿Seguro que quieres eliminar esta especie?')) return;
+    await fetch(`${API}/admin/especie/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+    mostrarMensaje('✅ Especie eliminada', 'exito'); cargarDatos();
   }
 
   function mostrarMensaje(texto, tipo) {
     const div = document.getElementById('mensaje-admin');
-    div.textContent = texto;
-    div.className = tipo;
-    div.style.display = 'block';
+    div.textContent = texto; div.className = tipo; div.style.display = 'block';
     setTimeout(() => div.style.display = 'none', 4000);
   }
 
-  // Enter en password
   document.getElementById('password-input').addEventListener('keypress', e => {
     if (e.key === 'Enter') verificarPassword();
   });
 </script>
-
 </body>
 </html>
