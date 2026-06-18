@@ -3,318 +3,480 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campo App - Fundo Muto</title>
+  <title>AgroMonitor — Trampas</title>
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: Arial, sans-serif;
-      max-width: 500px;
-      margin: 0 auto;
-      padding: 20px;
-      background: #f5f5f5;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f4f0;
+      min-height: 100vh;
     }
-    h1 { color: #2d6a2d; font-size: 22px; }
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-      color: #333;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 25px;
-      width: 100%;
-      padding: 14px;
-      background: #2d6a2d;
+
+    header {
+      background: linear-gradient(135deg, #1a4d1a, #2d7d2d);
       color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 18px;
-      cursor: pointer;
-    }
-    button:active { background: #1f4d1f; }
-    #mensaje {
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 6px;
+      padding: 18px 20px;
       text-align: center;
-      display: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
-    .exito { background: #d4edda; color: #155724; }
-    .error { background: #f8d7da; color: #721c24; }
-    .offline { background: #fff3cd; color: #856404; }
+
+    header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 3px;
+    }
+
     #estado-conexion {
       text-align: center;
-      padding: 6px;
+      padding: 8px;
       font-size: 13px;
-      border-radius: 6px;
-      margin-bottom: 15px;
+      font-weight: 600;
     }
-    .online { background: #d4edda; color: #155724; }
+    .online  { background: #d4edda; color: #155724; }
     .offline-bar { background: #fff3cd; color: #856404; }
-    #lista-pendientes {
-      margin-top: 20px;
+
+    .form-container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .card {
       background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a4d1a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e8f5e8;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 5px;
+      margin-top: 12px;
+    }
+
+    label:first-of-type { margin-top: 0; }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      color: #333;
+      background: #fafafa;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #2d7d2d;
+      background: white;
+    }
+
+    .conteo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .conteo-item label {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .especie-header {
+      font-size: 13px;
+      font-weight: 700;
+      color: #555;
+      margin: 12px 0 8px 0;
+      padding: 6px 10px;
+      background: #f0f4f0;
       border-radius: 6px;
-      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-guardar {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #1a4d1a, #2d7d2d);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(45,125,45,0.3);
+      transition: transform 0.1s;
+    }
+
+    .btn-guardar:active { transform: scale(0.98); }
+
+    #mensaje {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
       display: none;
     }
-    #lista-pendientes h3 { font-size: 14px; color: #856404; margin: 0 0 8px 0; }
+
+    .exito  { background: #d4edda; color: #155724; }
+    .error  { background: #f8d7da; color: #721c24; }
+    .offline { background: #fff3cd; color: #856404; }
+
+    #lista-pendientes {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      display: none;
+    }
+
+    #lista-pendientes h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #856404;
+      margin-bottom: 10px;
+    }
+
     .pendiente-item {
       font-size: 13px;
-      padding: 5px 0;
-      border-bottom: 1px solid #eee;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
       color: #555;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-sync {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      background: #856404;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .gps-badge {
+      font-size: 11px;
+      color: #2d7d2d;
+      margin-top: 4px;
     }
   </style>
 </head>
 <body>
 
-  <h1>🪤 Conteo de Trampas</h1>
-  <p>Fundo Muto — Arequipa</p>
+<header>
+  <h1>🪤 AgroMonitor</h1>
+  <p>Fundo Muto — Monitoreo de Moscas y Plagas</p>
+</header>
 
-  <div id="estado-conexion">Verificando conexión...</div>
+<div id="estado-conexion">Verificando conexión...</div>
 
-  <label>Fecha</label>
-  <input type="date" id="fecha">
+<div class="form-container">
 
-  <label>Lugar</label>
-  <select id="lugar">
-    <option value="">-- Seleccionar --</option>
-    <option value="F.AGROPEL">F.AGROPEL</option>
-    <option value="F.ZEGARRA">F.ZEGARRA</option>
-    <option value="F.SANTA GABRIELA">F.SANTA GABRIELA</option>
-    <option value="SALAS">SALAS</option>
-    <option value="FAA 1-4">FAA 1-4</option>
-    <option value="HUERTO CASA">HUERTO CASA</option>
-    <option value="UCHAS">UCHAS</option>
-    <option value="FAA 5-6">FAA 5-6</option>
-    <option value="FAA PERIMETROS">FAA PERIMETROS</option>
-  </select>
+  <div class="card">
+    <div class="card-title">📋 Información General</div>
 
-  <label>Lote (referencia)</label>
-  <input type="text" id="lote" placeholder="Ej. Lote A, Sector 2...">
+    <label>Fecha</label>
+    <input type="date" id="fecha">
 
-  <label>Tipo de Trampa</label>
-  <select id="tipo_trampa">
-    <option value="">-- Seleccionar --</option>
-    <option value="L.TORULA">L.TORULA</option>
-    <option value="JACKSON">JACKSON</option>
-    <option value="MIXTAS">MIXTAS</option>
-    <option value="GF-120">GF-120</option>
-  </select>
+    <label>Lugar</label>
+    <select id="lugar">
+      <option value="">— Seleccionar lugar —</option>
+      <option value="F.AGROPEL">F.AGROPEL</option>
+      <option value="F.ZEGARRA">F.ZEGARRA</option>
+      <option value="F.SANTA GABRIELA">F.SANTA GABRIELA</option>
+      <option value="SALAS">SALAS</option>
+      <option value="FAA 1-4">FAA 1-4</option>
+      <option value="HUERTO CASA">HUERTO CASA</option>
+      <option value="UCHAS">UCHAS</option>
+      <option value="FAA 5-6">FAA 5-6</option>
+      <option value="FAA PERIMETROS">FAA PERIMETROS</option>
+    </select>
 
-  <label>Machos Ceratitis</label>
-  <input type="number" id="machos_ceratitis" min="0" value="0">
+    <label>Lote (referencia)</label>
+    <input type="text" id="lote" placeholder="Ej. Lote A, Sector 2...">
 
-  <label>Hembras Ceratitis</label>
-  <input type="number" id="hembras_ceratitis" min="0" value="0">
+    <label>Tipo de Trampa</label>
+    <select id="tipo_trampa">
+      <option value="">— Seleccionar tipo —</option>
+      <option value="L.TORULA">L.TORULA</option>
+      <option value="JACKSON">JACKSON</option>
+      <option value="MIXTAS">MIXTAS</option>
+      <option value="GF-120">GF-120</option>
+    </select>
 
-  <label>Machos Anastrepha</label>
-  <input type="number" id="machos_anastrepha" min="0" value="0">
+    <div class="gps-badge" id="gps-status">📍 Obteniendo ubicación...</div>
+  </div>
 
-  <label>Hembras Anastrepha</label>
-  <input type="number" id="hembras_anastrepha" min="0" value="0">
+  <div class="card">
+    <div class="card-title">🦟 Conteo de Individuos</div>
 
-  <label>Observación (opcional)</label>
-  <textarea id="observacion" rows="3" placeholder="Notas adicionales..."></textarea>
+    <div class="especie-header">🔴 Ceratitis capitata</div>
+    <div class="conteo-grid">
+      <div class="conteo-item">
+        <label>♂ Machos</label>
+        <input type="number" id="machos_ceratitis" min="0" value="0">
+      </div>
+      <div class="conteo-item">
+        <label>♀ Hembras</label>
+        <input type="number" id="hembras_ceratitis" min="0" value="0">
+      </div>
+    </div>
 
-  <button onclick="guardarRegistro()">💾 Guardar Registro</button>
+    <div class="especie-header">🟠 Anastrepha spp.</div>
+    <div class="conteo-grid">
+      <div class="conteo-item">
+        <label>♂ Machos</label>
+        <input type="number" id="machos_anastrepha" min="0" value="0">
+      </div>
+      <div class="conteo-item">
+        <label>♀ Hembras</label>
+        <input type="number" id="hembras_anastrepha" min="0" value="0">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 Observaciones</div>
+    <textarea id="observacion" rows="3" placeholder="Notas adicionales, condiciones del campo..."></textarea>
+  </div>
+
+  <button class="btn-guardar" onclick="guardarRegistro()">💾 Guardar Registro</button>
 
   <div id="mensaje"></div>
 
   <div id="lista-pendientes">
     <h3>⏳ Registros pendientes de sincronizar</h3>
     <div id="items-pendientes"></div>
+    <button class="btn-sync" onclick="sincronizarPendientes()">🔄 Sincronizar ahora</button>
   </div>
 
-  <script>
-    const API = "";
+</div>
 
-    // Registrar Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').then(() => {
-        console.log('Service Worker registrado');
-      });
+<script>
+  const API = "";
+
+  // GPS
+  let lat = null, lon = null;
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      lat = pos.coords.latitude;
+      lon = pos.coords.longitude;
+      document.getElementById('gps-status').textContent = `📍 Ubicación capturada (${lat.toFixed(5)}, ${lon.toFixed(5)})`;
+    }, () => {
+      document.getElementById('gps-status').textContent = '📍 Ubicación no disponible';
+    });
+  }
+
+  // Fecha de hoy por defecto
+  document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+
+  // Estado de conexión
+  function actualizarEstado() {
+    const div = document.getElementById('estado-conexion');
+    if (navigator.onLine) {
+      div.textContent = '🟢 Conectado a internet';
+      div.className = 'online';
+      sincronizarPendientes();
+    } else {
+      div.textContent = '🟡 Sin internet — guardando localmente';
+      div.className = 'offline-bar';
     }
+    mostrarPendientes();
+  }
 
-    // Coordenadas GPS
-    let lat = null, lon = null;
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
-        lat = pos.coords.latitude;
-        lon = pos.coords.longitude;
-      });
-    }
+  window.addEventListener('online', actualizarEstado);
+  window.addEventListener('offline', actualizarEstado);
+  actualizarEstado();
 
-    // Mostrar estado de conexión
-    function actualizarEstado() {
-      const div = document.getElementById('estado-conexion');
-      if (navigator.onLine) {
-        div.textContent = '🟢 Conectado — los registros se enviarán directamente';
-        div.className = 'online';
-        sincronizarPendientes();
-      } else {
-        div.textContent = '🟡 Sin internet — los registros se guardarán en el celular';
-        div.className = 'offline-bar';
-      }
-      mostrarPendientes();
-    }
-
-    window.addEventListener('online', actualizarEstado);
-    window.addEventListener('offline', actualizarEstado);
-    actualizarEstado();
-
-    // IndexedDB
-    function abrirDB() {
-      return new Promise((resolve, reject) => {
-        const req = indexedDB.open('campo-app-db', 1);
-        req.onupgradeneeded = e => {
-          e.target.result.createObjectStore('pendientes', { keyPath: 'id', autoIncrement: true });
-        };
-        req.onsuccess = e => resolve(e.target.result);
-        req.onerror = reject;
-      });
-    }
-
-    async function guardarPendiente(datos) {
-      const db = await abrirDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('pendientes', 'readwrite');
-        tx.objectStore('pendientes').add({ datos, timestamp: new Date().toISOString() });
-        tx.oncomplete = resolve;
-        tx.onerror = reject;
-      });
-    }
-
-    async function obtenerPendientes() {
-      const db = await abrirDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('pendientes', 'readonly');
-        const req = tx.objectStore('pendientes').getAll();
-        req.onsuccess = e => resolve(e.target.result);
-        req.onerror = reject;
-      });
-    }
-
-    async function eliminarPendiente(id) {
-      const db = await abrirDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('pendientes', 'readwrite');
-        tx.objectStore('pendientes').delete(id);
-        tx.oncomplete = resolve;
-        tx.onerror = reject;
-      });
-    }
-
-    async function mostrarPendientes() {
-      const pendientes = await obtenerPendientes();
-      const div = document.getElementById('lista-pendientes');
-      const items = document.getElementById('items-pendientes');
-      if (pendientes.length === 0) {
-        div.style.display = 'none';
-        return;
-      }
-      div.style.display = 'block';
-      items.innerHTML = pendientes.map(p =>
-        `<div class="pendiente-item">📍 ${p.datos.lugar} — ${p.datos.tipo_trampa} — ${p.timestamp.slice(0,16).replace('T',' ')}</div>`
-      ).join('');
-    }
-
-    async function sincronizarPendientes() {
-      const pendientes = await obtenerPendientes();
-      for (const registro of pendientes) {
-        try {
-          const res = await fetch(`${API}/registro`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(registro.datos)
-          });
-          if (res.ok) {
-            await eliminarPendiente(registro.id);
-          }
-        } catch (e) {
-          console.log('Error sincronizando:', e);
-        }
-      }
-      mostrarPendientes();
-    }
-
-    async function guardarRegistro() {
-      const fecha = document.getElementById('fecha').value;
-      const lugar = document.getElementById('lugar').value;
-      const lote = document.getElementById('lote').value;
-      const tipo_trampa = document.getElementById('tipo_trampa').value;
-      const machos_ceratitis = parseInt(document.getElementById('machos_ceratitis').value) || 0;
-      const hembras_ceratitis = parseInt(document.getElementById('hembras_ceratitis').value) || 0;
-      const machos_anastrepha = parseInt(document.getElementById('machos_anastrepha').value) || 0;
-      const hembras_anastrepha = parseInt(document.getElementById('hembras_anastrepha').value) || 0;
-      const observacion = document.getElementById('observacion').value;
-
-      if (!fecha || !lugar || !tipo_trampa) {
-        mostrarMensaje('Por favor completa fecha, lugar y tipo de trampa.', 'error');
-        return;
-      }
-
-      const datos = {
-        fecha, lugar, lote, tipo_trampa,
-        machos_ceratitis, hembras_ceratitis,
-        machos_anastrepha, hembras_anastrepha,
-        coordenadas_lat: lat,
-        coordenadas_lon: lon,
-        observacion
+  // IndexedDB
+  function abrirDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open('campo-app-db', 1);
+      req.onupgradeneeded = e => {
+        e.target.result.createObjectStore('pendientes', { keyPath: 'id', autoIncrement: true });
       };
+      req.onsuccess = e => resolve(e.target.result);
+      req.onerror = reject;
+    });
+  }
 
-      if (navigator.onLine) {
-        try {
-          const res = await fetch(`${API}/registro`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(datos)
-          });
-          const resultado = await res.json();
-          mostrarMensaje(`✅ Registro guardado. Trampa #${resultado.numero_trampa} en ${lugar}`, 'exito');
-          limpiarFormulario();
-        } catch (err) {
-          await guardarPendiente(datos);
-          mostrarMensaje('⚠️ Error de red. Guardado localmente, se sincronizará después.', 'offline');
-          mostrarPendientes();
-          limpiarFormulario();
+  async function guardarPendiente(datos) {
+    const db = await abrirDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('pendientes', 'readwrite');
+      tx.objectStore('pendientes').add({ datos, timestamp: new Date().toISOString() });
+      tx.oncomplete = resolve;
+      tx.onerror = reject;
+    });
+  }
+
+  async function obtenerPendientes() {
+    const db = await abrirDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('pendientes', 'readonly');
+      const req = tx.objectStore('pendientes').getAll();
+      req.onsuccess = e => resolve(e.target.result);
+      req.onerror = reject;
+    });
+  }
+
+  async function eliminarPendiente(id) {
+    const db = await abrirDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('pendientes', 'readwrite');
+      tx.objectStore('pendientes').delete(id);
+      tx.oncomplete = resolve;
+      tx.onerror = reject;
+    });
+  }
+
+  async function mostrarPendientes() {
+    const pendientes = await obtenerPendientes();
+    const div = document.getElementById('lista-pendientes');
+    const items = document.getElementById('items-pendientes');
+    if (pendientes.length === 0) {
+      div.style.display = 'none';
+      return;
+    }
+    div.style.display = 'block';
+    items.innerHTML = pendientes.map(p =>
+      `<div class="pendiente-item">⏳ ${p.datos.lugar} — ${p.datos.tipo_trampa} — ${p.timestamp.slice(0,16).replace('T',' ')}</div>`
+    ).join('');
+  }
+
+  async function sincronizarPendientes() {
+    const pendientes = await obtenerPendientes();
+    if (pendientes.length === 0) return;
+
+    let sincronizados = 0;
+    for (const registro of pendientes) {
+      try {
+        const res = await fetch(`${API}/registro`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(registro.datos)
+        });
+        if (res.ok) {
+          await eliminarPendiente(registro.id);
+          sincronizados++;
         }
-      } else {
+      } catch (e) {
+        console.log('Sin internet aún:', e);
+      }
+    }
+    if (sincronizados > 0) {
+      mostrarMensaje(`✅ ${sincronizados} registro(s) sincronizados con el servidor`, 'exito');
+    }
+    mostrarPendientes();
+  }
+
+  async function guardarRegistro() {
+    const fecha = document.getElementById('fecha').value;
+    const lugar = document.getElementById('lugar').value;
+    const lote = document.getElementById('lote').value;
+    const tipo_trampa = document.getElementById('tipo_trampa').value;
+    const machos_ceratitis = parseInt(document.getElementById('machos_ceratitis').value) || 0;
+    const hembras_ceratitis = parseInt(document.getElementById('hembras_ceratitis').value) || 0;
+    const machos_anastrepha = parseInt(document.getElementById('machos_anastrepha').value) || 0;
+    const hembras_anastrepha = parseInt(document.getElementById('hembras_anastrepha').value) || 0;
+    const observacion = document.getElementById('observacion').value;
+
+    if (!fecha || !lugar || !tipo_trampa) {
+      mostrarMensaje('⚠️ Completa fecha, lugar y tipo de trampa.', 'error');
+      return;
+    }
+
+    const datos = {
+      fecha, lugar, lote, tipo_trampa,
+      machos_ceratitis, hembras_ceratitis,
+      machos_anastrepha, hembras_anastrepha,
+      coordenadas_lat: lat,
+      coordenadas_lon: lon,
+      observacion
+    };
+
+    if (navigator.onLine) {
+      try {
+        const res = await fetch(`${API}/registro`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+        if (res.ok) {
+          const resultado = await res.json();
+          mostrarMensaje(`✅ Trampa #${resultado.numero_trampa} guardada en ${lugar}`, 'exito');
+          limpiarFormulario();
+        } else {
+          throw new Error('Error servidor');
+        }
+      } catch (err) {
         await guardarPendiente(datos);
-        mostrarMensaje('🟡 Sin internet. Guardado en el celular, se sincronizará cuando haya señal.', 'offline');
+        mostrarMensaje('⚠️ Error de red. Guardado localmente.', 'offline');
         mostrarPendientes();
         limpiarFormulario();
       }
+    } else {
+      await guardarPendiente(datos);
+      mostrarMensaje('🟡 Sin internet. Guardado localmente, se sincronizará al conectarte.', 'offline');
+      mostrarPendientes();
+      limpiarFormulario();
     }
+  }
 
-    function mostrarMensaje(texto, tipo) {
-      const div = document.getElementById('mensaje');
-      div.textContent = texto;
-      div.className = tipo;
-      div.style.display = 'block';
-      setTimeout(() => div.style.display = 'none', 5000);
-    }
+  function mostrarMensaje(texto, tipo) {
+    const div = document.getElementById('mensaje');
+    div.textContent = texto;
+    div.className = tipo;
+    div.style.display = 'block';
+    setTimeout(() => div.style.display = 'none', 5000);
+  }
 
-    function limpiarFormulario() {
-      document.getElementById('lugar').value = '';
-      document.getElementById('lote').value = '';
-      document.getElementById('tipo_trampa').value = '';
-      document.getElementById('machos_ceratitis').value = 0;
-      document.getElementById('hembras_ceratitis').value = 0;
-      document.getElementById('machos_anastrepha').value = 0;
-      document.getElementById('hembras_anastrepha').value = 0;
-      document.getElementById('observacion').value = '';
-    }
-  </script>
+  function limpiarFormulario() {
+    document.getElementById('lugar').value = '';
+    document.getElementById('lote').value = '';
+    document.getElementById('tipo_trampa').value = '';
+    document.getElementById('machos_ceratitis').value = 0;
+    document.getElementById('hembras_ceratitis').value = 0;
+    document.getElementById('machos_anastrepha').value = 0;
+    document.getElementById('hembras_anastrepha').value = 0;
+    document.getElementById('observacion').value = '';
+    document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+  }
+</script>
 
 </body>
 </html>
