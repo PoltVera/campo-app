@@ -5,155 +5,562 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>América Monitor</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f0; min-height: 100vh; }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      background: #eef2ee;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────────── */
     header {
-      background: linear-gradient(160deg, #0f3d0f 0%, #1a6b1a 50%, #2d9e2d 100%);
-      color: white; padding: 28px 20px 22px; text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3); position: relative; overflow: hidden;
+      background: linear-gradient(150deg, #0a2e0a 0%, #145214 40%, #1e7a1e 100%);
+      color: white;
+      padding: 24px 20px 20px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+      position: relative;
+      overflow: hidden;
     }
+
     header::before {
-      content: ''; position: absolute; top: -30px; right: -30px;
-      width: 120px; height: 120px; background: rgba(255,255,255,0.05); border-radius: 50%;
+      content: '';
+      position: absolute; top: -50px; right: -50px;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+      border-radius: 50%;
     }
+
     header::after {
-      content: ''; position: absolute; bottom: -40px; left: -20px;
-      width: 150px; height: 150px; background: rgba(255,255,255,0.04); border-radius: 50%;
+      content: '';
+      position: absolute; bottom: -60px; left: -30px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+      border-radius: 50%;
     }
-    .header-icon { font-size: 40px; margin-bottom: 6px; display: block; }
-    header h1 { font-size: 22px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
-    header p { font-size: 12px; opacity: 0.75; margin-top: 4px; letter-spacing: 0.5px; }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-icon-wrap {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 14px;
+      width: 52px; height: 52px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+    }
+
+    .header-titles h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-align: left;
+    }
+
+    .header-titles p {
+      font-size: 11px;
+      opacity: 0.65;
+      text-align: left;
+      margin-top: 2px;
+      letter-spacing: 0.3px;
+    }
+
+    .header-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.12);
+      margin: 14px 0 12px;
+      position: relative; z-index: 1;
+    }
+
+    .header-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative; z-index: 1;
+    }
+
     .header-badge {
-      display: inline-block; margin-top: 10px;
-      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 20px; padding: 4px 14px; font-size: 11px; letter-spacing: 0.5px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
     }
-    #estado-conexion { text-align: center; padding: 9px; font-size: 13px; font-weight: 600; }
-    .online { background: #d4edda; color: #155724; }
+
+    .btn-refresh {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      color: white;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-refresh:active {
+      background: rgba(255,255,255,0.25);
+      border-color: rgba(255,255,255,0.5);
+      transform: scale(0.95);
+    }
+
+    .btn-refresh.loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .btn-refresh .refresh-icon {
+      display: inline-block;
+      transition: transform 0.4s ease;
+    }
+
+    .btn-refresh.loading .refresh-icon {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── ESTADO CONEXIÓN ─────────────────────────────── */
+    #estado-conexion {
+      text-align: center;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .online  { background: #d4edda; color: #1a6b2a; }
     .offline-bar { background: #fff3cd; color: #856404; }
-    .form-container { max-width: 480px; margin: 0 auto; padding: 16px; }
+
+    /* ── CARGANDO ────────────────────────────────────── */
+    #cargando {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .loading-spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #e0e0e0;
+      border-top-color: #1e7a1e;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    .loading-text { font-size: 14px; font-weight: 500; color: #555; }
+
+    /* ── CONTENEDOR ──────────────────────────────────── */
+    .form-container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 14px 14px 30px;
+    }
+
+    /* ── CARDS ───────────────────────────────────────── */
     .card {
-      background: white; border-radius: 14px; padding: 20px;
-      margin-bottom: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-      border-left: 4px solid #2d9e2d;
+      background: white;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05);
     }
+
     .card-title {
-      font-size: 12px; font-weight: 800; color: #1a6b1a;
-      text-transform: uppercase; letter-spacing: 1px;
-      margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #e8f5e8;
-      display: flex; align-items: center; gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #1a6b1a;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid #e8f5e8;
+      display: flex;
+      align-items: center;
+      gap: 7px;
     }
+
+    .card-title-icon {
+      background: #e8f5e8;
+      border-radius: 8px;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+
+    /* ── CAMPOS ──────────────────────────────────────── */
+    .field-group { margin-top: 12px; }
+    .field-group:first-of-type { margin-top: 0; }
+
     label {
-      display: block; font-size: 12px; font-weight: 700; color: #555;
-      margin-bottom: 5px; margin-top: 13px;
-      text-transform: uppercase; letter-spacing: 0.4px;
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #666;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    label:first-of-type { margin-top: 0; }
+
     input, select, textarea {
-      width: 100%; padding: 12px 14px; border: 1.5px solid #e0e0e0;
-      border-radius: 8px; font-size: 15px; color: #333;
-      background: #fafafa; transition: all 0.2s;
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #e8e8e8;
+      border-radius: 10px;
+      font-size: 15px;
+      color: #222;
+      background: #fafafa;
+      transition: all 0.2s;
+      font-family: inherit;
     }
+
     input:focus, select:focus, textarea:focus {
-      outline: none; border-color: #2d9e2d; background: white;
-      box-shadow: 0 0 0 3px rgba(45,158,45,0.1);
+      outline: none;
+      border-color: #1e7a1e;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(30,122,30,0.08);
     }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    /* ── INFO GPS Y CACHE ────────────────────────────── */
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 8px 10px;
+      background: #f0f7f0;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #2d7a2d;
+    }
+
+    .cache-info {
+      margin-top: 8px;
+      padding: 7px 10px;
+      background: #fffbf0;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #856404;
+      text-align: center;
+      display: none;
+    }
+
+    .cache-info.visible { display: block; }
+
+    /* ── ESPECIES ────────────────────────────────────── */
     .especie-card {
-      background: #f5f9f5; border-radius: 10px; padding: 14px;
-      margin-bottom: 10px; border: 1px solid #e0ede0;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      border: 1.5px solid #e0ede0;
+      background: linear-gradient(135deg, #f8fdf8 0%, #f0f7f0 100%);
     }
+
+    .especie-card:last-child { margin-bottom: 0; }
+
+    .especie-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .especie-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
     .especie-nombre {
-      font-size: 13px; font-weight: 700; color: #444;
-      margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #2a2a2a;
+      font-style: italic;
     }
-    .conteo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .conteo-item label { font-size: 11px; color: #777; margin-top: 0; }
+
+    .especie-tag {
+      margin-left: auto;
+      background: #e8f5e8;
+      color: #1a6b1a;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .conteo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .conteo-item {
+      background: white;
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .conteo-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .conteo-item input {
+      border: none;
+      background: transparent;
+      font-size: 22px;
+      font-weight: 800;
+      color: #1a6b1a;
+      padding: 0;
+      text-align: center;
+      width: 100%;
+    }
+
+    .conteo-item input:focus {
+      outline: none;
+      box-shadow: none;
+      background: transparent;
+    }
+
+    /* ── BOTÓN GUARDAR ───────────────────────────────── */
     .btn-guardar {
-      width: 100%; padding: 17px;
-      background: linear-gradient(135deg, #0f3d0f, #2d9e2d);
-      color: white; border: none; border-radius: 12px;
-      font-size: 16px; font-weight: 800; cursor: pointer;
-      letter-spacing: 1px; text-transform: uppercase;
-      box-shadow: 0 6px 16px rgba(45,158,45,0.35);
-      transition: transform 0.1s; margin-bottom: 4px;
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #0a2e0a 0%, #1e7a1e 100%);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 8px 20px rgba(30,122,30,0.35);
+      transition: all 0.15s ease;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: inherit;
     }
-    .btn-guardar:active { transform: scale(0.97); }
+
+    .btn-guardar:active {
+      transform: scale(0.97);
+      box-shadow: 0 4px 10px rgba(30,122,30,0.25);
+    }
+
+    /* ── MENSAJES ────────────────────────────────────── */
     #mensaje {
-      margin-top: 12px; padding: 13px; border-radius: 10px;
-      text-align: center; font-size: 14px; font-weight: 600; display: none;
+      margin-top: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+      animation: fadeIn 0.2s ease;
     }
-    .exito  { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .error  { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    .offline { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .exito   { background: #d4edda; color: #1a6b2a; border: 1px solid #b8dfc4; }
+    .error   { background: #f8d7da; color: #721c24; border: 1px solid #f1b0b7; }
+    .offline { background: #fff3cd; color: #856404; border: 1px solid #fce6a0; }
+
+    /* ── PENDIENTES ──────────────────────────────────── */
     #lista-pendientes {
-      background: white; border-radius: 14px; padding: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.07); display: none;
-      border-left: 4px solid #856404; margin-top: 14px;
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      display: none;
+      border-left: 4px solid #e6a817;
+      margin-top: 12px;
     }
+
     #lista-pendientes h3 {
-      font-size: 12px; font-weight: 800; color: #856404;
-      margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #856404;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+
     .pendiente-item {
-      font-size: 13px; padding: 8px 0; border-bottom: 1px solid #f5f5f5;
-      color: #666; display: flex; align-items: center; gap: 8px;
+      font-size: 12px;
+      padding: 9px 0;
+      border-bottom: 1px solid #f5f5f5;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+
+    .pendiente-item:last-child { border-bottom: none; }
+
     .btn-sync {
-      width: 100%; margin-top: 12px; padding: 11px; background: #856404;
-      color: white; border: none; border-radius: 8px;
-      font-size: 13px; font-weight: 700; cursor: pointer;
-      text-transform: uppercase; letter-spacing: 0.5px;
+      width: 100%;
+      margin-top: 12px;
+      padding: 11px;
+      background: linear-gradient(135deg, #9a6f00, #e6a817);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-family: inherit;
+      transition: all 0.15s;
     }
-    .gps-badge { font-size: 11px; color: #2d9e2d; margin-top: 6px; font-weight: 600; }
-    #cargando { text-align: center; padding: 40px; color: #666; font-size: 14px; }
-    .cache-info { font-size: 11px; color: #856404; text-align: center; margin-top: 8px; }
+
+    .btn-sync:active { transform: scale(0.97); }
+
+    /* ── COLORES POR ESPECIE ─────────────────────────── */
+    .dot-0 { background: #e53935; }
+    .dot-1 { background: #fb8c00; }
+    .dot-2 { background: #8e24aa; }
+    .dot-3 { background: #1e88e5; }
+    .dot-4 { background: #43a047; }
   </style>
 </head>
 <body>
 
 <header>
-  <span class="header-icon">🪰</span>
-  <h1>América Monitor</h1>
-  <p>Fundo Muto — Arequipa, Perú</p>
-  <span class="header-badge">🌿 Monitoreo de Moscas y Plagas</span>
-  <div style="margin-top:12px;">
-    <button onclick="actualizarListas()" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.35); color:white; padding:7px 16px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer;">
-      🔄 Actualizar listas
+  <div class="header-top">
+    <div class="header-icon-wrap">🪰</div>
+    <div class="header-titles">
+      <h1>América Monitor</h1>
+      <p>Fundo Muto — Arequipa, Perú</p>
+    </div>
+  </div>
+  <div class="header-divider"></div>
+  <div class="header-bottom">
+    <span class="header-badge">🌿 Monitoreo de Plagas</span>
+    <button class="btn-refresh" id="btn-refresh" onclick="actualizarListas()">
+      <span class="refresh-icon">↻</span>
+      <span>Actualizar</span>
     </button>
   </div>
 </header>
 
 <div id="estado-conexion">Verificando conexión...</div>
 
-<div id="cargando">⏳ Cargando listas...</div>
+<div id="cargando">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Cargando listas...</div>
+</div>
 
 <div class="form-container" id="formulario" style="display:none;">
 
+  <!-- INFORMACIÓN GENERAL -->
   <div class="card">
-    <div class="card-title">📋 Información General</div>
-    <label>Fecha</label>
-    <input type="date" id="fecha">
-    <label>Lugar</label>
-    <select id="lugar"><option value="">— Seleccionar lugar —</option></select>
-    <label>Lote (referencia)</label>
-    <input type="text" id="lote" placeholder="Ej. Lote A, Sector 2...">
-    <label>Tipo de Trampa</label>
-    <select id="tipo_trampa"><option value="">— Seleccionar tipo —</option></select>
-    <div class="gps-badge" id="gps-status">📍 Obteniendo ubicación GPS...</div>
+    <div class="card-title">
+      <div class="card-title-icon">📋</div>
+      Información General
+    </div>
+
+    <div class="field-group">
+      <label>Fecha de evaluación</label>
+      <input type="date" id="fecha">
+    </div>
+
+    <div class="field-group">
+      <label>Lugar</label>
+      <select id="lugar"><option value="">— Seleccionar lugar —</option></select>
+    </div>
+
+    <div class="field-group">
+      <label>Lote / Referencia</label>
+      <input type="text" id="lote" placeholder="Ej. Lote A, Sector Norte...">
+    </div>
+
+    <div class="field-group">
+      <label>Tipo de Trampa</label>
+      <select id="tipo_trampa"><option value="">— Seleccionar tipo —</option></select>
+    </div>
+
+    <div class="info-row" id="gps-status">
+      📍 Obteniendo ubicación GPS...
+    </div>
+
     <div class="cache-info" id="cache-info"></div>
   </div>
 
+  <!-- CONTEO DE INDIVIDUOS -->
   <div class="card">
-    <div class="card-title">🦟 Conteo de Individuos</div>
+    <div class="card-title">
+      <div class="card-title-icon">🦟</div>
+      Conteo de Individuos
+    </div>
     <div id="especies-container"></div>
   </div>
 
+  <!-- OBSERVACIONES -->
   <div class="card">
-    <div class="card-title">📝 Observaciones</div>
-    <textarea id="observacion" rows="3" placeholder="Notas adicionales..."></textarea>
+    <div class="card-title">
+      <div class="card-title-icon">📝</div>
+      Observaciones
+    </div>
+    <textarea id="observacion" rows="3" placeholder="Condiciones del campo, estado de la trampa, notas adicionales..."></textarea>
   </div>
 
-  <button class="btn-guardar" onclick="guardarRegistro()">💾 Guardar Registro</button>
+  <button class="btn-guardar" onclick="guardarRegistro()">
+    <span>💾</span>
+    <span>Guardar Registro</span>
+  </button>
+
   <div id="mensaje"></div>
 
   <div id="lista-pendientes">
@@ -170,20 +577,22 @@
   let sincronizando = false;
   let especiesActivas = [];
 
+  const COLORES = ['#e53935','#fb8c00','#8e24aa','#1e88e5','#43a047'];
+
   // GPS
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos => {
       lat = pos.coords.latitude;
       lon = pos.coords.longitude;
-      document.getElementById('gps-status').textContent = `📍 GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+      document.getElementById('gps-status').innerHTML = `📍 GPS capturado: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
     }, () => {
-      document.getElementById('gps-status').textContent = '📍 GPS no disponible';
+      document.getElementById('gps-status').innerHTML = '📍 GPS no disponible';
     });
   }
 
   document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
 
-  // ─── Carga de listas con caché local ────────────────────────
+  // ── LISTAS ──────────────────────────────────────────
   function pintarListas(lugares, tipos, especies) {
     const selLugar = document.getElementById('lugar');
     selLugar.innerHTML = '<option value="">— Seleccionar lugar —</option>';
@@ -203,32 +612,40 @@
 
     especiesActivas = especies;
     const contenedor = document.getElementById('especies-container');
-    contenedor.innerHTML = especies.map((esp, i) => `
-      <div class="especie-card">
-        <div class="especie-nombre">🔵 ${esp}</div>
-        <div class="conteo-grid">
-          <div class="conteo-item">
-            <label>♂ Machos</label>
-            <input type="number" id="machos_${i}" min="0" value="0">
+    contenedor.innerHTML = especies.map((esp, i) => {
+      const color = COLORES[i % COLORES.length];
+      return `
+        <div class="especie-card">
+          <div class="especie-header">
+            <div class="especie-dot" style="background:${color};"></div>
+            <span class="especie-nombre">${esp}</span>
+            <span class="especie-tag">TRAMPA</span>
           </div>
-          <div class="conteo-item">
-            <label>♀ Hembras</label>
-            <input type="number" id="hembras_${i}" min="0" value="0">
+          <div class="conteo-grid">
+            <div class="conteo-item">
+              <div class="conteo-label">♂ Machos</div>
+              <input type="number" id="machos_${i}" min="0" value="0" inputmode="numeric">
+            </div>
+            <div class="conteo-item">
+              <div class="conteo-label">♀ Hembras</div>
+              <input type="number" id="hembras_${i}" min="0" value="0" inputmode="numeric">
+            </div>
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
 
     document.getElementById('cargando').style.display = 'none';
     document.getElementById('formulario').style.display = 'block';
   }
 
-async function actualizarListas() {
+  async function actualizarListas() {
     if (!navigator.onLine) {
-      mostrarMensaje('🟡 Sin internet. No se pueden actualizar las listas ahora.', 'offline');
+      mostrarMensaje('🟡 Sin internet. No se pueden actualizar las listas.', 'offline');
       return;
     }
-    mostrarMensaje('🔄 Actualizando listas...', 'offline');
+    const btn = document.getElementById('btn-refresh');
+    btn.classList.add('loading');
     try {
       const [rLugares, rTipos, rEspecies] = await Promise.all([
         fetch(`${API}/lugares`).then(r => r.json()),
@@ -242,58 +659,59 @@ async function actualizarListas() {
         lugares, tipos, especies, fecha: new Date().toISOString()
       }));
       pintarListas(lugares, tipos, especies);
-      document.getElementById('cache-info').textContent = '✅ Listas actualizadas desde el servidor';
+      const ci = document.getElementById('cache-info');
+      ci.textContent = '✅ Listas actualizadas desde el servidor';
+      ci.classList.add('visible');
       mostrarMensaje('✅ Listas actualizadas correctamente', 'exito');
     } catch (e) {
       mostrarMensaje('⚠️ No se pudieron actualizar las listas.', 'error');
+    } finally {
+      btn.classList.remove('loading');
     }
   }
+
   async function cargarListas() {
-    // 1. Intentar desde el servidor (si hay internet)
     try {
       const [rLugares, rTipos, rEspecies] = await Promise.all([
         fetch(`${API}/lugares`).then(r => r.json()),
         fetch(`${API}/tipos_trampa`).then(r => r.json()),
         fetch(`${API}/especies`).then(r => r.json())
       ]);
-
       const lugares = rLugares.lugares;
       const tipos = rTipos.tipos_trampa;
       const especies = rEspecies.especies;
-
-      // Guardar copia local para uso offline
       localStorage.setItem('cache_listas', JSON.stringify({
         lugares, tipos, especies, fecha: new Date().toISOString()
       }));
-
       pintarListas(lugares, tipos, especies);
-      document.getElementById('cache-info').textContent = '✅ Listas actualizadas desde el servidor';
-
+      const ci = document.getElementById('cache-info');
+      ci.textContent = '✅ Listas actualizadas desde el servidor';
+      ci.classList.add('visible');
     } catch (e) {
-      // 2. Sin internet: usar la última copia guardada
       const cache = localStorage.getItem('cache_listas');
       if (cache) {
         const datos = JSON.parse(cache);
         pintarListas(datos.lugares, datos.tipos, datos.especies);
         const fecha = datos.fecha ? datos.fecha.slice(0,10) : 'desconocida';
-        document.getElementById('cache-info').textContent = `🟡 Usando listas guardadas (${fecha}) — sin internet`;
+        const ci = document.getElementById('cache-info');
+        ci.textContent = `🟡 Listas guardadas (${fecha}) — sin internet`;
+        ci.classList.add('visible');
       } else {
-        // 3. Nunca hubo copia: primera vez sin internet
         document.getElementById('cargando').innerHTML =
-          '⚠️ Necesitas internet la primera vez que abres la app para descargar las listas. Conéctate una vez y luego podrás trabajar sin internet.';
+          '<div style="font-size:32px;margin-bottom:12px;">⚠️</div><div class="loading-text">Necesitas internet la primera vez para descargar las listas.</div>';
       }
     }
   }
 
-  // ─── Estado de conexión ─────────────────────────────────────
+  // ── CONEXIÓN ─────────────────────────────────────────
   function actualizarEstado() {
     const div = document.getElementById('estado-conexion');
     if (navigator.onLine) {
-      div.textContent = '🟢 Conectado a internet';
+      div.innerHTML = '🟢 Conectado a internet';
       div.className = 'online';
       sincronizarPendientes();
     } else {
-      div.textContent = '🟡 Sin internet — guardando localmente';
+      div.innerHTML = '🟡 Sin internet — guardando localmente';
       div.className = 'offline-bar';
     }
     mostrarPendientes();
@@ -304,7 +722,7 @@ async function actualizarListas() {
   actualizarEstado();
   cargarListas();
 
-  // ─── IndexedDB ──────────────────────────────────────────────
+  // ── INDEXEDDB ────────────────────────────────────────
   function abrirDB() {
     return new Promise((resolve, reject) => {
       const req = indexedDB.open('campo-app-db', 1);
