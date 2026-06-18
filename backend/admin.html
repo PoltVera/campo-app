@@ -187,24 +187,13 @@
   const API = "https://campo-app-qau7.onrender.com";
   let password = "";
 
-  function verificarPassword() {
+ function verificarPassword() {
     const input = document.getElementById('password-input').value;
     if (!input) return;
-
-    fetch(`${API}/admin/datos`)
-      .then(res => {
-        if (res.ok) {
-          password = input;
-          document.getElementById('login').style.display = 'none';
-          document.getElementById('panel').style.display = 'block';
-          cargarDatos();
-        } else {
-          document.getElementById('login-error').textContent = 'Contraseña incorrecta';
-        }
-      })
-      .catch(() => {
-        document.getElementById('login-error').textContent = 'Error de conexión';
-      });
+    password = input;
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('panel').style.display = 'block';
+    cargarDatos();
   }
 
   function cargarDatos() {
