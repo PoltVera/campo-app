@@ -21,17 +21,8 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
-    header h1 {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-
-    header p {
-      font-size: 12px;
-      opacity: 0.8;
-      margin-top: 3px;
-    }
+    header h1 { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+    header p { font-size: 12px; opacity: 0.8; margin-top: 3px; }
 
     #estado-conexion {
       text-align: center;
@@ -39,7 +30,7 @@
       font-size: 13px;
       font-weight: 600;
     }
-    .online  { background: #d4edda; color: #155724; }
+    .online { background: #d4edda; color: #155724; }
     .offline-bar { background: #fff3cd; color: #856404; }
 
     .form-container {
@@ -101,10 +92,7 @@
       gap: 12px;
     }
 
-    .conteo-item label {
-      font-size: 12px;
-      color: #666;
-    }
+    .conteo-item label { font-size: 12px; color: #666; }
 
     .especie-header {
       font-size: 13px;
@@ -381,7 +369,6 @@
   async function sincronizarPendientes() {
     const pendientes = await obtenerPendientes();
     if (pendientes.length === 0) return;
-
     let sincronizados = 0;
     for (const registro of pendientes) {
       try {
@@ -399,7 +386,7 @@
       }
     }
     if (sincronizados > 0) {
-      mostrarMensaje(`✅ ${sincronizados} registro(s) sincronizados con el servidor`, 'exito');
+      mostrarMensaje(`✅ ${sincronizados} registro(s) sincronizados`, 'exito');
     }
     mostrarPendientes();
   }
@@ -431,6 +418,7 @@
 
     if (navigator.onLine) {
       try {
+        mostrarMensaje('🔄 Enviando datos...', 'offline');
         const res = await fetch(`${API}/registro`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -441,11 +429,12 @@
           mostrarMensaje(`✅ Trampa #${resultado.numero_trampa} guardada en ${lugar}`, 'exito');
           limpiarFormulario();
         } else {
-          throw new Error('Error servidor');
+          const errorText = await res.text();
+          mostrarMensaje(`❌ Error servidor ${res.status}: ${errorText}`, 'error');
         }
       } catch (err) {
         await guardarPendiente(datos);
-        mostrarMensaje('⚠️ Error de red. Guardado localmente.', 'offline');
+        mostrarMensaje(`⚠️ Error: ${err.message} — guardado localmente`, 'offline');
         mostrarPendientes();
         limpiarFormulario();
       }

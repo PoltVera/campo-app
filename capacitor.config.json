@@ -1,5 +1,15 @@
 {
   "appId": "com.fundomuto.campo",
   "appName": "Campo App",
-  "webDir": "backend"
+  "webDir": "backend",
+  "server": {
+    "allowNavigation": [
+      "campo-app-qau7.onrender.com"
+    ]
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
+  }
 }
