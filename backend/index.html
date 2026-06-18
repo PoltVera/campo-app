@@ -14,21 +14,70 @@
     }
 
     header {
-      background: linear-gradient(135deg, #1a4d1a, #2d7d2d);
+      background: linear-gradient(160deg, #0f3d0f 0%, #1a6b1a 50%, #2d9e2d 100%);
       color: white;
-      padding: 18px 20px;
+      padding: 28px 20px 22px;
       text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
     }
 
-    header h1 { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
-    header p { font-size: 12px; opacity: 0.8; margin-top: 3px; }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 120px; height: 120px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: -20px;
+      width: 150px; height: 150px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+
+    .header-icon {
+      font-size: 40px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    header p {
+      font-size: 12px;
+      opacity: 0.75;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .header-badge {
+      display: inline-block;
+      margin-top: 10px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
 
     #estado-conexion {
       text-align: center;
-      padding: 8px;
+      padding: 9px;
       font-size: 13px;
       font-weight: 600;
+      letter-spacing: 0.3px;
     }
     .online { background: #d4edda; color: #155724; }
     .offline-bar { background: #fff3cd; color: #856404; }
@@ -41,49 +90,56 @@
 
     .card {
       background: white;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      border-left: 4px solid #2d9e2d;
     }
 
     .card-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #1a4d1a;
+      font-size: 12px;
+      font-weight: 800;
+      color: #1a6b1a;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
       margin-bottom: 14px;
       padding-bottom: 8px;
-      border-bottom: 2px solid #e8f5e8;
+      border-bottom: 1px solid #e8f5e8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     label {
       display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: #444;
+      font-size: 12px;
+      font-weight: 700;
+      color: #555;
       margin-bottom: 5px;
-      margin-top: 12px;
+      margin-top: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
 
     label:first-of-type { margin-top: 0; }
 
     input, select, textarea {
       width: 100%;
-      padding: 11px 14px;
-      border: 1.5px solid #ddd;
+      padding: 12px 14px;
+      border: 1.5px solid #e0e0e0;
       border-radius: 8px;
       font-size: 15px;
       color: #333;
       background: #fafafa;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
     }
 
     input:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: #2d7d2d;
+      border-color: #2d9e2d;
       background: white;
+      box-shadow: 0 0 0 3px rgba(45,158,45,0.1);
     }
 
     .conteo-grid {
@@ -92,72 +148,86 @@
       gap: 12px;
     }
 
-    .conteo-item label { font-size: 12px; color: #666; }
+    .conteo-item label {
+      font-size: 11px;
+      color: #777;
+      margin-top: 0;
+    }
 
     .especie-header {
       font-size: 13px;
       font-weight: 700;
-      color: #555;
-      margin: 12px 0 8px 0;
-      padding: 6px 10px;
-      background: #f0f4f0;
-      border-radius: 6px;
+      color: #444;
+      margin: 14px 0 10px 0;
+      padding: 8px 12px;
+      background: #f5f9f5;
+      border-radius: 8px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      border: 1px solid #e0ede0;
     }
 
     .btn-guardar {
       width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #1a4d1a, #2d7d2d);
+      padding: 17px;
+      background: linear-gradient(135deg, #0f3d0f, #2d9e2d);
       color: white;
       border: none;
-      border-radius: 10px;
-      font-size: 17px;
-      font-weight: 700;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 800;
       cursor: pointer;
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 12px rgba(45,125,45,0.3);
-      transition: transform 0.1s;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 6px 16px rgba(45,158,45,0.35);
+      transition: transform 0.1s, box-shadow 0.1s;
+      margin-bottom: 4px;
     }
 
-    .btn-guardar:active { transform: scale(0.98); }
+    .btn-guardar:active {
+      transform: scale(0.97);
+      box-shadow: 0 3px 8px rgba(45,158,45,0.25);
+    }
 
     #mensaje {
       margin-top: 12px;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 13px;
+      border-radius: 10px;
       text-align: center;
       font-size: 14px;
       font-weight: 600;
       display: none;
     }
 
-    .exito  { background: #d4edda; color: #155724; }
-    .error  { background: #f8d7da; color: #721c24; }
-    .offline { background: #fff3cd; color: #856404; }
+    .exito  { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .error  { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .offline { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
 
     #lista-pendientes {
       background: white;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
       display: none;
+      border-left: 4px solid #856404;
+      margin-top: 14px;
     }
 
     #lista-pendientes h3 {
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 800;
       color: #856404;
       margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .pendiente-item {
       font-size: 13px;
       padding: 8px 0;
-      border-bottom: 1px solid #f0f0f0;
-      color: #555;
+      border-bottom: 1px solid #f5f5f5;
+      color: #666;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -165,29 +235,34 @@
 
     .btn-sync {
       width: 100%;
-      margin-top: 10px;
-      padding: 10px;
+      margin-top: 12px;
+      padding: 11px;
       background: #856404;
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 700;
       cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .gps-badge {
       font-size: 11px;
-      color: #2d7d2d;
-      margin-top: 4px;
+      color: #2d9e2d;
+      margin-top: 6px;
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>🪤 AgroMonitor</h1>
-  <p>Fundo Muto — Monitoreo de Moscas y Plagas</p>
+  <span class="header-icon">🪤</span>
+  <h1>AgroMonitor</h1>
+  <p>Fundo Muto — Arequipa, Perú</p>
+  <span class="header-badge">🦟 Monitoreo de Moscas y Plagas</span>
 </header>
 
 <div id="estado-conexion">Verificando conexión...</div>
@@ -226,7 +301,7 @@
       <option value="GF-120">GF-120</option>
     </select>
 
-    <div class="gps-badge" id="gps-status">📍 Obteniendo ubicación...</div>
+    <div class="gps-badge" id="gps-status">📍 Obteniendo ubicación GPS...</div>
   </div>
 
   <div class="card">
@@ -267,7 +342,7 @@
   <div id="mensaje"></div>
 
   <div id="lista-pendientes">
-    <h3>⏳ Registros pendientes de sincronizar</h3>
+    <h3>⏳ Pendientes de sincronizar</h3>
     <div id="items-pendientes"></div>
     <button class="btn-sync" onclick="sincronizarPendientes()">🔄 Sincronizar ahora</button>
   </div>
@@ -283,9 +358,9 @@
     navigator.geolocation.getCurrentPosition(pos => {
       lat = pos.coords.latitude;
       lon = pos.coords.longitude;
-      document.getElementById('gps-status').textContent = `📍 Ubicación capturada (${lat.toFixed(5)}, ${lon.toFixed(5)})`;
+      document.getElementById('gps-status').textContent = `📍 GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
     }, () => {
-      document.getElementById('gps-status').textContent = '📍 Ubicación no disponible';
+      document.getElementById('gps-status').textContent = '📍 GPS no disponible';
     });
   }
 
@@ -366,18 +441,33 @@
     ).join('');
   }
 
+  function enviarXHR(datos) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${API}/registro`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.timeout = 15000;
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(JSON.parse(xhr.responseText));
+        } else {
+          reject(new Error(`Error servidor: ${xhr.status}`));
+        }
+      };
+      xhr.onerror = function() { reject(new Error('Error de red')); };
+      xhr.ontimeout = function() { reject(new Error('Timeout — servidor tardó demasiado')); };
+      xhr.send(JSON.stringify(datos));
+    });
+  }
+
   async function sincronizarPendientes() {
     const pendientes = await obtenerPendientes();
     if (pendientes.length === 0) return;
     let sincronizados = 0;
     for (const registro of pendientes) {
       try {
-        const res = await fetch(`${API}/registro`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(registro.datos)
-        });
-        if (res.ok) {
+        const resultado = await enviarXHR(registro.datos);
+        if (resultado) {
           await eliminarPendiente(registro.id);
           sincronizados++;
         }
@@ -419,22 +509,12 @@
     if (navigator.onLine) {
       try {
         mostrarMensaje('🔄 Enviando datos...', 'offline');
-        const res = await fetch(`${API}/registro`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(datos)
-        });
-        if (res.ok) {
-          const resultado = await res.json();
-          mostrarMensaje(`✅ Trampa #${resultado.numero_trampa} guardada en ${lugar}`, 'exito');
-          limpiarFormulario();
-        } else {
-          const errorText = await res.text();
-          mostrarMensaje(`❌ Error servidor ${res.status}: ${errorText}`, 'error');
-        }
+        const resultado = await enviarXHR(datos);
+        mostrarMensaje(`✅ Trampa #${resultado.numero_trampa} guardada en ${lugar}`, 'exito');
+        limpiarFormulario();
       } catch (err) {
         await guardarPendiente(datos);
-        mostrarMensaje(`⚠️ Error: ${err.message} — guardado localmente`, 'offline');
+        mostrarMensaje(`⚠️ ${err.message} — guardado localmente`, 'offline');
         mostrarPendientes();
         limpiarFormulario();
       }
@@ -451,7 +531,7 @@
     div.textContent = texto;
     div.className = tipo;
     div.style.display = 'block';
-    setTimeout(() => div.style.display = 'none', 5000);
+    setTimeout(() => div.style.display = 'none', 6000);
   }
 
   function limpiarFormulario() {
