@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 import psycopg2
@@ -7,6 +8,15 @@ import os
 from datetime import date
 
 app = FastAPI()
+
+# CORS: permite que el APK (origen distinto a Render) llame a la API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_con():
     return psycopg2.connect(
