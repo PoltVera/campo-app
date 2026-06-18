@@ -106,6 +106,7 @@
     }
     .gps-badge { font-size: 11px; color: #2d9e2d; margin-top: 6px; font-weight: 600; }
     #cargando { text-align: center; padding: 40px; color: #666; font-size: 14px; }
+    .cache-info { font-size: 11px; color: #856404; text-align: center; margin-top: 8px; }
   </style>
 </head>
 <body>
@@ -134,6 +135,7 @@
     <label>Tipo de Trampa</label>
     <select id="tipo_trampa"><option value="">— Seleccionar tipo —</option></select>
     <div class="gps-badge" id="gps-status">📍 Obteniendo ubicación GPS...</div>
+    <div class="cache-info" id="cache-info"></div>
   </div>
 
   <div class="card">
@@ -176,8 +178,48 @@
 
   document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
 
-  // Cargar listas dinámicas desde Neon
+  // ─── Carga de listas con caché local ────────────────────────
+  function pintarListas(lugares, tipos, especies) {
+    const selLugar = document.getElementById('lugar');
+    selLugar.innerHTML = '<option value="">— Seleccionar lugar —</option>';
+    lugares.forEach(l => {
+      const opt = document.createElement('option');
+      opt.value = l; opt.textContent = l;
+      selLugar.appendChild(opt);
+    });
+
+    const selTipo = document.getElementById('tipo_trampa');
+    selTipo.innerHTML = '<option value="">— Seleccionar tipo —</option>';
+    tipos.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t; opt.textContent = t;
+      selTipo.appendChild(opt);
+    });
+
+    especiesActivas = especies;
+    const contenedor = document.getElementById('especies-container');
+    contenedor.innerHTML = especies.map((esp, i) => `
+      <div class="especie-card">
+        <div class="especie-nombre">🔵 ${esp}</div>
+        <div class="conteo-grid">
+          <div class="conteo-item">
+            <label>♂ Machos</label>
+            <input type="number" id="machos_${i}" min="0" value="0">
+          </div>
+          <div class="conteo-item">
+            <label>♀ Hembras</label>
+            <input type="number" id="hembras_${i}" min="0" value="0">
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('cargando').style.display = 'none';
+    document.getElementById('formulario').style.display = 'block';
+  }
+
   async function cargarListas() {
+    // 1. Intentar desde el servidor (si hay internet)
     try {
       const [rLugares, rTipos, rEspecies] = await Promise.all([
         fetch(`${API}/lugares`).then(r => r.json()),
@@ -185,50 +227,35 @@
         fetch(`${API}/especies`).then(r => r.json())
       ]);
 
-      // Llenar lugares
-      const selLugar = document.getElementById('lugar');
-      rLugares.lugares.forEach(l => {
-        const opt = document.createElement('option');
-        opt.value = l; opt.textContent = l;
-        selLugar.appendChild(opt);
-      });
+      const lugares = rLugares.lugares;
+      const tipos = rTipos.tipos_trampa;
+      const especies = rEspecies.especies;
 
-      // Llenar tipos de trampa
-      const selTipo = document.getElementById('tipo_trampa');
-      rTipos.tipos_trampa.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t; opt.textContent = t;
-        selTipo.appendChild(opt);
-      });
+      // Guardar copia local para uso offline
+      localStorage.setItem('cache_listas', JSON.stringify({
+        lugares, tipos, especies, fecha: new Date().toISOString()
+      }));
 
-      // Llenar especies dinámicamente
-      especiesActivas = rEspecies.especies;
-      const contenedor = document.getElementById('especies-container');
-      contenedor.innerHTML = especiesActivas.map((esp, i) => `
-        <div class="especie-card">
-          <div class="especie-nombre">🔵 ${esp}</div>
-          <div class="conteo-grid">
-            <div class="conteo-item">
-              <label>♂ Machos</label>
-              <input type="number" id="machos_${i}" min="0" value="0">
-            </div>
-            <div class="conteo-item">
-              <label>♀ Hembras</label>
-              <input type="number" id="hembras_${i}" min="0" value="0">
-            </div>
-          </div>
-        </div>
-      `).join('');
+      pintarListas(lugares, tipos, especies);
+      document.getElementById('cache-info').textContent = '✅ Listas actualizadas desde el servidor';
 
-      document.getElementById('cargando').style.display = 'none';
-      document.getElementById('formulario').style.display = 'block';
-
-    } catch(e) {
-      document.getElementById('cargando').textContent = '⚠️ Error cargando listas. Verifica tu conexión.';
+    } catch (e) {
+      // 2. Sin internet: usar la última copia guardada
+      const cache = localStorage.getItem('cache_listas');
+      if (cache) {
+        const datos = JSON.parse(cache);
+        pintarListas(datos.lugares, datos.tipos, datos.especies);
+        const fecha = datos.fecha ? datos.fecha.slice(0,10) : 'desconocida';
+        document.getElementById('cache-info').textContent = `🟡 Usando listas guardadas (${fecha}) — sin internet`;
+      } else {
+        // 3. Nunca hubo copia: primera vez sin internet
+        document.getElementById('cargando').innerHTML =
+          '⚠️ Necesitas internet la primera vez que abres la app para descargar las listas. Conéctate una vez y luego podrás trabajar sin internet.';
+      }
     }
   }
 
-  // Estado de conexión
+  // ─── Estado de conexión ─────────────────────────────────────
   function actualizarEstado() {
     const div = document.getElementById('estado-conexion');
     if (navigator.onLine) {
@@ -247,7 +274,7 @@
   actualizarEstado();
   cargarListas();
 
-  // IndexedDB
+  // ─── IndexedDB ──────────────────────────────────────────────
   function abrirDB() {
     return new Promise((resolve, reject) => {
       const req = indexedDB.open('campo-app-db', 1);
@@ -345,7 +372,6 @@
       return;
     }
 
-    // Construir capturas dinámicamente por especie
     const capturas = {};
     especiesActivas.forEach((esp, i) => {
       capturas[esp] = {
