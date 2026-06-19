@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2732" height="2732" viewBox="0 0 2732 2732">
+  <rect width="2732" height="2732" fill="#0a2e0a"/>
+  <g transform="translate(866, 900) scale(4)">
+    <ellipse cx="125" cy="140" rx="90" ry="65" fill="white"/>
+    <ellipse cx="65" cy="110" rx="35" ry="45" fill="white"/>
+    <ellipse cx="185" cy="110" rx="35" ry="45" fill="white"/>
+    <ellipse cx="125" cy="85" rx="45" ry="40" fill="white"/>
+    <ellipse cx="105" cy="68" rx="15" ry="22" fill="white"/>
+    <ellipse cx="145" cy="68" rx="15" ry="22" fill="white"/>
+    <ellipse cx="105" cy="52" rx="8" ry="12" fill="#ffb3b3"/>
+    <ellipse cx="145" cy="52" rx="8" ry="12" fill="#ffb3b3"/>
+    <circle cx="112" cy="88" r="4" fill="#222"/>
+    <circle cx="138" cy="88" r="4" fill="#222"/>
+    <ellipse cx="125" cy="98" rx="12" ry="7" fill="#ffb3b3"/>
+    <rect x="88" y="198" width="18" height="45" rx="6" fill="white"/>
+    <rect x="112" y="198" width="18" height="45" rx="6" fill="white"/>
+    <rect x="136" y="198" width="18" height="45" rx="6" fill="white"/>
+    <rect x="160" y="198" width="18" height="45" rx="6" fill="white"/>
+    <path d="M195 145 Q220 130 215 155 Q210 170 195 160" fill="white"/>
+    <ellipse cx="125" cy="175" rx="20" ry="14" fill="#ffb3b3"/>
+  </g>
+  <text x="1366" y="1680" text-anchor="middle" font-family="Arial" font-size="72" font-weight="bold" fill="rgba(255,255,255,0.6)" letter-spacing="8">FUNDO MUTO</text>
+</svg>

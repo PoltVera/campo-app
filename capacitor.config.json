@@ -1,6 +1,6 @@
 {
   "appId": "com.fundomuto.campo",
-  "appName": "Campo App",
+  "appName": "América Monitor",
   "webDir": "backend",
   "server": {
     "allowNavigation": [
@@ -8,8 +8,15 @@
     ]
   },
   "android": {
-    "allowMixedContent": true,
-    "captureInput": true,
-    "webContentsDebuggingEnabled": true
+    "allowMixedContent": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "launchAutoHide": true,
+      "backgroundColor": "#0a2e0a",
+      "androidSplashResourceName": "splash",
+      "showSpinner": false
+    }
   }
 }

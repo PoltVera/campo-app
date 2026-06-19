@@ -88,7 +88,7 @@ def registros_hoy():
                machos_ceratitis, hembras_ceratitis,
                machos_anastrepha, hembras_anastrepha, creado_en
         FROM trampas_moscas
-        WHERE fecha = CURRENT_DATE
+        WHERE fecha = (NOW() AT TIME ZONE 'America/Lima')::date
         ORDER BY creado_en DESC;
     """)
     filas = cur.fetchall()
@@ -128,8 +128,8 @@ def guardar_registro(data: RegistroTrampa):
             (fecha, lugar, lote, tipo_trampa, numero_trampa,
              machos_ceratitis, hembras_ceratitis,
              machos_anastrepha, hembras_anastrepha,
-             coordenadas_lat, coordenadas_lon, observacion)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+             coordenadas_lat, coordenadas_lon, observacion, creado_en)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW() AT TIME ZONE 'America/Lima')
         """, (
             data.fecha, data.lugar, data.lote, data.tipo_trampa, numero_trampa,
             machos_ceratitis, hembras_ceratitis,
