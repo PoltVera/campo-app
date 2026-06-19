@@ -269,42 +269,48 @@
     document.getElementById('app-contenido').style.display = 'block';
   }
 
+  // Descarga listas del servidor y las guarda en caché. Devuelve true si lo logró.
+  async function descargarListas() {
+    const [rL, rT, rE] = await Promise.all([
+      fetch(`${API}/lugares`).then(r=>r.json()),
+      fetch(`${API}/tipos_trampa`).then(r=>r.json()),
+      fetch(`${API}/especies`).then(r=>r.json())
+    ]);
+    localStorage.setItem('cache_listas', JSON.stringify({
+      lugares:rL.lugares, tipos:rT.tipos_trampa, especies:rE.especies, fecha:new Date().toISOString()
+    }));
+    pintarListas(rL.lugares, rT.tipos_trampa, rE.especies);
+    return true;
+  }
+
+  // Botón manual: fuerza descarga del servidor
   async function actualizarListas() {
     if (!navigator.onLine) { mostrarMensaje('🟡 Sin internet. No se pueden actualizar las listas.', 'offline'); return; }
     const btn = document.getElementById('btn-refresh'); btn.classList.add('loading');
     try {
-      const [rL, rT, rE] = await Promise.all([
-        fetch(`${API}/lugares`).then(r=>r.json()),
-        fetch(`${API}/tipos_trampa`).then(r=>r.json()),
-        fetch(`${API}/especies`).then(r=>r.json())
-      ]);
-      localStorage.setItem('cache_listas', JSON.stringify({lugares:rL.lugares, tipos:rT.tipos_trampa, especies:rE.especies, fecha:new Date().toISOString()}));
-      pintarListas(rL.lugares, rT.tipos_trampa, rE.especies);
-      const ci=document.getElementById('cache-info'); ci.textContent='✅ Listas actualizadas'; ci.classList.add('visible');
+      await descargarListas();
+      const ci=document.getElementById('cache-info'); ci.textContent='✅ Listas actualizadas desde el servidor'; ci.classList.add('visible');
       mostrarMensaje('✅ Listas actualizadas correctamente', 'exito');
     } catch(e) { mostrarMensaje('⚠️ No se pudieron actualizar las listas.', 'error'); }
     finally { btn.classList.remove('loading'); }
   }
 
+  // Al arrancar: usa la caché si existe (rápido, sin esperar al servidor).
+  // Solo descarga del servidor si NO hay caché (primera vez).
   async function cargarListas() {
-    try {
-      const [rL, rT, rE] = await Promise.all([
-        fetch(`${API}/lugares`).then(r=>r.json()),
-        fetch(`${API}/tipos_trampa`).then(r=>r.json()),
-        fetch(`${API}/especies`).then(r=>r.json())
-      ]);
-      localStorage.setItem('cache_listas', JSON.stringify({lugares:rL.lugares, tipos:rT.tipos_trampa, especies:rE.especies, fecha:new Date().toISOString()}));
-      pintarListas(rL.lugares, rT.tipos_trampa, rE.especies);
-      const ci=document.getElementById('cache-info'); ci.textContent='✅ Listas actualizadas'; ci.classList.add('visible');
-    } catch(e) {
-      const cache = localStorage.getItem('cache_listas');
-      if (cache) {
-        const d = JSON.parse(cache);
-        pintarListas(d.lugares, d.tipos, d.especies);
-        const ci=document.getElementById('cache-info');
-        ci.textContent = `🟡 Listas guardadas (${d.fecha ? d.fecha.slice(0,10):'?'}) — sin internet`;
-        ci.classList.add('visible');
-      } else {
+    const cache = localStorage.getItem('cache_listas');
+    if (cache) {
+      const d = JSON.parse(cache);
+      pintarListas(d.lugares, d.tipos, d.especies);
+      const ci=document.getElementById('cache-info');
+      ci.textContent = `📋 Listas guardadas (${d.fecha ? d.fecha.slice(0,10):'?'}) · usa ↻ para actualizar`;
+      ci.classList.add('visible');
+    } else {
+      // Primera vez: necesita internet
+      try {
+        await descargarListas();
+        const ci=document.getElementById('cache-info'); ci.textContent='✅ Listas descargadas'; ci.classList.add('visible');
+      } catch(e) {
         document.getElementById('cargando').innerHTML = '<div style="font-size:32px;margin-bottom:12px;">⚠️</div><div class="loading-text">Necesitas internet la primera vez para descargar las listas.</div>';
       }
     }
@@ -389,7 +395,7 @@
       cont.innerHTML = '<div class="vacio"><div class="vacio-icono">🟡</div>Sin internet.<br>Conéctate para ver los enviados.</div>';
       return;
     }
-    btn.classList.add('loading');
+    if (btn) btn.classList.add('loading');
     try {
       const res = await fetch(`${API}/registros_hoy`).then(r=>r.json());
       const registros = res.registros;
@@ -408,7 +414,7 @@
       }
     } catch(e) {
       cont.innerHTML = '<div class="vacio"><div class="vacio-icono">⚠️</div>Error al cargar. Intenta de nuevo.</div>';
-    } finally { btn.classList.remove('loading'); }
+    } finally { if (btn) btn.classList.remove('loading'); }
   }
 
   function enviarXHR(datos) {
@@ -438,9 +444,16 @@
         try { const r = await enviarXHR(reg.datos); if (r) { await eliminarPendiente(reg.id); n++; } }
         catch(e) { break; }
       }
-      if (n > 0) mostrarMensaje(`✅ ${n} registro(s) sincronizados`, 'exito');
-      actualizarContadorPendientes();
-      mostrarPendientes();
+      if (n > 0) {
+        mostrarMensaje(`✅ ${n} registro(s) sincronizados`, 'exito');
+        // Refrescar TODO automáticamente sin cerrar la app
+        await actualizarContadorPendientes();
+        await mostrarPendientes();
+        // Si la pestaña de enviados está visible, recargarla
+        if (document.getElementById('vista-enviados').classList.contains('activa')) {
+          await cargarEnviados();
+        }
+      }
     } finally { sincronizando = false; }
   }
 
