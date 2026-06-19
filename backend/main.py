@@ -79,6 +79,32 @@ def get_especies():
     return {"especies": especies}
 
 # ─── Registro de trampas ────────────────────────────────────
+@app.get("/registros_hoy")
+def registros_hoy():
+    con = get_con()
+    cur = con.cursor()
+    cur.execute("""
+        SELECT lugar, tipo_trampa, numero_trampa,
+               machos_ceratitis, hembras_ceratitis,
+               machos_anastrepha, hembras_anastrepha, creado_en
+        FROM trampas_moscas
+        WHERE fecha = CURRENT_DATE
+        ORDER BY creado_en DESC;
+    """)
+    filas = cur.fetchall()
+    cur.close()
+    con.close()
+    registros = []
+    for f in filas:
+        registros.append({
+            "lugar": f[0],
+            "tipo_trampa": f[1],
+            "numero_trampa": f[2],
+            "total": (f[3] or 0) + (f[4] or 0) + (f[5] or 0) + (f[6] or 0),
+            "hora": f[7].strftime("%H:%M") if f[7] else ""
+        })
+    return {"registros": registros}
+
 @app.post("/registro")
 def guardar_registro(data: RegistroTrampa):
     try:
