@@ -32,10 +32,9 @@
   .loading-text { font-size:14px; font-weight:500; color:#555; }
   @keyframes spin { from{transform:rotate(0);} to{transform:rotate(360deg);} }
 
-  /* TABS */
   .tabs { max-width:480px; margin:0 auto; padding:14px 14px 0; display:flex; gap:6px; }
   .tab { flex:1; padding:10px 4px; text-align:center; background:#dde7dd; border:none; border-radius:10px 10px 0 0;
-    font-size:11px; font-weight:700; color:#6a8a6a; cursor:pointer; font-family:inherit; transition:all 0.15s; position:relative; }
+    font-size:11px; font-weight:700; color:#6a8a6a; cursor:pointer; font-family:inherit; transition:all 0.15s; }
   .tab.activa { background:white; color:#1a6b1a; box-shadow:0 -2px 8px rgba(0,0,0,0.05); }
   .tab .contador { display:inline-block; background:#e6a817; color:white; border-radius:10px; padding:1px 6px;
     font-size:10px; margin-left:3px; }
@@ -61,7 +60,8 @@
     background-repeat:no-repeat; background-position:right 14px center; padding-right:36px; }
 
   .info-row { display:flex; align-items:center; gap:6px; margin-top:10px; padding:8px 10px; background:#f0f7f0;
-    border-radius:8px; font-size:11px; font-weight:600; color:#2d7a2d; }
+    border-radius:8px; font-size:11px; font-weight:600; color:#2d7a2d; transition: all 0.3s; }
+  .info-row.buscando { background:#fff3cd; color:#856404; }
   .cache-info { margin-top:8px; padding:7px 10px; background:#fffbf0; border-radius:8px; font-size:11px;
     font-weight:600; color:#856404; text-align:center; display:none; }
   .cache-info.visible { display:block; }
@@ -84,6 +84,7 @@
     letter-spacing:1px; text-transform:uppercase; box-shadow:0 8px 20px rgba(30,122,30,0.35);
     transition:all 0.15s; margin-bottom:4px; display:flex; align-items:center; justify-content:center; gap:10px; font-family:inherit; }
   .btn-guardar:active { transform:scale(0.97); }
+  .btn-guardar:disabled { opacity:0.6; pointer-events:none; }
 
   #mensaje { margin-top:12px; padding:14px 16px; border-radius:12px; text-align:center; font-size:13px; font-weight:600; display:none; }
   .exito { background:#d4edda; color:#1a6b2a; border:1px solid #b8dfc4; }
@@ -109,25 +110,17 @@
     display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.15s; }
   .btn-actualizar-vista:active { transform:scale(0.97); }
 
-  /* BOTÓN FLOTANTE */
-  .fab {
-    position: fixed; bottom: 24px; right: 24px; z-index: 999;
-    width: 64px; height: 64px; border-radius: 50%;
-    background: linear-gradient(135deg, #0a2e0a, #1e7a1e);
-    color: white; border: none; cursor: pointer; font-size: 26px;
-    box-shadow: 0 6px 20px rgba(30,122,30,0.5);
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s; font-family: inherit;
-  }
-  .fab:active { transform: scale(0.9); box-shadow: 0 3px 10px rgba(30,122,30,0.4); }
-  .fab.loading { animation: pulse 1s ease-in-out infinite; }
+  .fab { position:fixed; bottom:24px; right:24px; z-index:999; width:64px; height:64px; border-radius:50%;
+    background:linear-gradient(135deg, #0a2e0a, #1e7a1e); color:white; border:none; cursor:pointer;
+    font-size:26px; box-shadow:0 6px 20px rgba(30,122,30,0.5); display:flex; align-items:center;
+    justify-content:center; transition:all 0.2s; font-family:inherit; }
+  .fab:active { transform:scale(0.9); }
+  .fab.loading { animation:pulse 1s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{box-shadow:0 6px 20px rgba(30,122,30,0.5);} 50%{box-shadow:0 6px 30px rgba(30,122,30,0.9);} }
   .fab-label { position:fixed; bottom:94px; right:14px; background:#0a2e0a; color:white;
     font-size:11px; font-weight:700; padding:5px 10px; border-radius:8px; z-index:999; white-space:nowrap; }
 
-  /* PESTAÑA CONTROL */
-  .control-card { background:white; border-radius:16px; padding:20px; margin-bottom:12px;
-    box-shadow:0 1px 6px rgba(0,0,0,0.06); }
+  .control-card { background:white; border-radius:16px; padding:20px; margin-bottom:12px; box-shadow:0 1px 6px rgba(0,0,0,0.06); }
   .control-titulo { font-size:12px; font-weight:800; color:#1a6b1a; text-transform:uppercase;
     letter-spacing:1px; margin-bottom:16px; padding-bottom:10px; border-bottom:1.5px solid #e8f5e8; }
   .btn-control { width:100%; padding:16px; border:none; border-radius:12px; font-size:14px;
@@ -140,7 +133,6 @@
   .info-control { background:#f5f9f5; border-radius:10px; padding:14px; font-size:13px; color:#555; line-height:1.8; }
   .info-control strong { color:#1a6b1a; }
   .refresh-spin { display:inline-block; }
-  .loading .refresh-spin { animation:spin 0.8s linear infinite; }
 </style>
 </head>
 <body>
@@ -164,7 +156,6 @@
 
 <div id="app-contenido" style="display:none;">
 
-  <!-- PESTAÑAS -->
   <div class="tabs">
     <button class="tab activa" id="tab-form" onclick="cambiarVista('form')">📝 Registrar</button>
     <button class="tab" id="tab-pendientes" onclick="cambiarVista('pendientes')">⏳ Pend. <span class="contador" id="cont-pendientes">0</span></button>
@@ -194,18 +185,23 @@
           <label>Tipo de Trampa</label>
           <select id="tipo_trampa"><option value="">— Seleccionar tipo —</option></select>
         </div>
-        <div class="info-row" id="gps-status">📍 Obteniendo ubicación GPS...</div>
+        <div class="info-row" id="gps-status">📍 GPS listo — se capturará al guardar</div>
         <div class="cache-info" id="cache-info"></div>
       </div>
+
       <div class="card">
         <div class="card-title"><div class="card-title-icon">🦟</div>Conteo de Individuos</div>
         <div id="especies-container"></div>
       </div>
+
       <div class="card">
         <div class="card-title"><div class="card-title-icon">📝</div>Observaciones</div>
         <textarea id="observacion" rows="3" placeholder="Condiciones del campo, estado de la trampa..."></textarea>
       </div>
-      <button class="btn-guardar" onclick="guardarRegistro()"><span>💾</span><span>Guardar Registro</span></button>
+
+      <button class="btn-guardar" id="btn-guardar" onclick="guardarRegistro()">
+        <span>💾</span><span>Guardar Registro</span>
+      </button>
       <div id="mensaje"></div>
     </div>
 
@@ -254,18 +250,37 @@
   let especiesActivas = [];
   const COLORES = ['#e53935','#fb8c00','#8e24aa','#1e88e5','#43a047'];
 
-  // GPS
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      lat = pos.coords.latitude; lon = pos.coords.longitude;
-      document.getElementById('gps-status').innerHTML = `📍 GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-    }, () => { document.getElementById('gps-status').innerHTML = '📍 GPS no disponible'; });
-  }
-
   document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-
-  // Ocultar label del FAB después de 3 segundos
   setTimeout(() => { document.getElementById('fab-label').style.display = 'none'; }, 3000);
+
+  // ── GPS: se captura fresco en cada guardado ──
+  function obtenerGPS() {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        document.getElementById('gps-status').innerHTML = '📍 GPS no disponible en este dispositivo';
+        resolve(null);
+        return;
+      }
+      const gpsDiv = document.getElementById('gps-status');
+      gpsDiv.className = 'info-row buscando';
+      gpsDiv.innerHTML = '📍 Obteniendo ubicación GPS...';
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          lat = pos.coords.latitude;
+          lon = pos.coords.longitude;
+          gpsDiv.className = 'info-row';
+          gpsDiv.innerHTML = `📍 GPS capturado: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+          resolve({ lat, lon });
+        },
+        () => {
+          gpsDiv.className = 'info-row';
+          gpsDiv.innerHTML = '📍 GPS no disponible — guardando sin coordenadas';
+          resolve(null);
+        },
+        { timeout: 8000, maximumAge: 0, enableHighAccuracy: true }
+      );
+    });
+  }
 
   // ── PESTAÑAS ──
   function cambiarVista(vista) {
@@ -278,7 +293,7 @@
     if (vista === 'control') actualizarInfoSistema();
   }
 
-  // ── BOTÓN FLOTANTE: sincroniza + refresca todo ──
+  // ── BOTÓN FLOTANTE ──
   async function refrescarTodo() {
     const fab = document.getElementById('fab-btn');
     fab.classList.add('loading');
@@ -286,7 +301,6 @@
     try {
       await sincronizarPendientes();
       await actualizarContadorPendientes();
-      // Refrescar la vista activa
       const vistaActiva = document.querySelector('.vista.activa');
       if (vistaActiva) {
         const id = vistaActiva.id;
@@ -315,14 +329,22 @@
     document.getElementById('especies-container').innerHTML = especies.map((esp,i) => {
       const color = COLORES[i % COLORES.length];
       return `<div class="especie-card">
-        <div class="especie-header"><div class="especie-dot" style="background:${color};"></div>
-        <span class="especie-nombre">${esp}</span><span class="especie-tag">TRAMPA</span></div>
+        <div class="especie-header">
+          <div class="especie-dot" style="background:${color};"></div>
+          <span class="especie-nombre">${esp}</span>
+          <span class="especie-tag">TRAMPA</span>
+        </div>
         <div class="conteo-grid">
-          <div class="conteo-item"><div class="conteo-label">♂ Machos</div>
-            <input type="number" id="machos_${i}" min="0" value="0" inputmode="numeric"></div>
-          <div class="conteo-item"><div class="conteo-label">♀ Hembras</div>
-            <input type="number" id="hembras_${i}" min="0" value="0" inputmode="numeric"></div>
-        </div></div>`;
+          <div class="conteo-item">
+            <div class="conteo-label">♂ Machos</div>
+            <input type="number" id="machos_${i}" min="0" value="0" inputmode="numeric">
+          </div>
+          <div class="conteo-item">
+            <div class="conteo-label">♀ Hembras</div>
+            <input type="number" id="hembras_${i}" min="0" value="0" inputmode="numeric">
+          </div>
+        </div>
+      </div>`;
     }).join('');
     document.getElementById('cargando').style.display = 'none';
     document.getElementById('app-contenido').style.display = 'block';
@@ -369,7 +391,7 @@
       <strong>Conexión:</strong> ${conexion}<br>
       <strong>Pendientes sin enviar:</strong> ${p.length}<br>
       <strong>Listas actualizadas:</strong> ${fechaCache}<br>
-      <strong>Lugares, trampas y especies:</strong> ${cache ? 'En caché ✅' : 'Sin caché ⚠️'}
+      <strong>Estado caché:</strong> ${cache ? 'Guardada ✅' : 'Sin caché ⚠️'}
     `;
   }
 
@@ -534,29 +556,58 @@
     const lote = document.getElementById('lote').value;
     const tipo_trampa = document.getElementById('tipo_trampa').value;
     const observacion = document.getElementById('observacion').value;
-    if (!fecha || !lugar || !tipo_trampa) { mostrarMensaje('⚠️ Completa fecha, lugar y tipo de trampa.', 'error'); return; }
+
+    if (!fecha || !lugar || !tipo_trampa) {
+      mostrarMensaje('⚠️ Completa fecha, lugar y tipo de trampa.', 'error');
+      return;
+    }
+
+    // Deshabilitar botón mientras se procesa
+    const btn = document.getElementById('btn-guardar');
+    btn.disabled = true;
+    btn.innerHTML = '<span>📍</span><span>Obteniendo GPS...</span>';
+
+    // Capturar GPS fresco en este momento exacto
+    const gps = await obtenerGPS();
+
     const capturas = {};
     especiesActivas.forEach((esp,i) => {
-      capturas[esp] = { machos: parseInt(document.getElementById(`machos_${i}`).value)||0,
-                        hembras: parseInt(document.getElementById(`hembras_${i}`).value)||0 };
+      capturas[esp] = {
+        machos: parseInt(document.getElementById(`machos_${i}`).value)||0,
+        hembras: parseInt(document.getElementById(`hembras_${i}`).value)||0
+      };
     });
-    const datos = { fecha, lugar, lote, tipo_trampa, capturas, coordenadas_lat:lat, coordenadas_lon:lon, observacion };
+
+    const datos = {
+      fecha, lugar, lote, tipo_trampa, capturas,
+      coordenadas_lat: gps ? gps.lat : null,
+      coordenadas_lon: gps ? gps.lon : null,
+      observacion
+    };
+
+    btn.innerHTML = '<span>💾</span><span>Guardando...</span>';
+
     if (navigator.onLine) {
       try {
-        mostrarMensaje('🔄 Enviando datos...', 'offline');
         const r = await enviarXHR(datos);
         mostrarMensaje(`✅ Trampa #${r.numero_trampa} guardada en ${lugar}`, 'exito');
         limpiarFormulario();
       } catch(err) {
         await guardarPendiente(datos);
         mostrarMensaje(`⚠️ ${err.message} — guardado localmente`, 'offline');
-        actualizarContadorPendientes(); limpiarFormulario();
+        actualizarContadorPendientes();
+        limpiarFormulario();
       }
     } else {
       await guardarPendiente(datos);
       mostrarMensaje('🟡 Sin internet. Guardado localmente.', 'offline');
-      actualizarContadorPendientes(); limpiarFormulario();
+      actualizarContadorPendientes();
+      limpiarFormulario();
     }
+
+    // Rehabilitar botón
+    btn.disabled = false;
+    btn.innerHTML = '<span>💾</span><span>Guardar Registro</span>';
   }
 
   function mostrarMensaje(texto, tipo) {
@@ -571,6 +622,8 @@
     document.getElementById('tipo_trampa').value = '';
     document.getElementById('observacion').value = '';
     document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+    document.getElementById('gps-status').innerHTML = '📍 GPS listo — se capturará al guardar';
+    document.getElementById('gps-status').className = 'info-row';
     especiesActivas.forEach((_,i) => {
       document.getElementById(`machos_${i}`).value = 0;
       document.getElementById(`hembras_${i}`).value = 0;
