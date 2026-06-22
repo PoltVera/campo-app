@@ -7,7 +7,7 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter','Segoe UI',Arial,sans-serif; background: #eef2ee; min-height: 100vh; }
+  body { font-family: 'Inter','Segoe UI',Arial,sans-serif; background: #eef2ee; min-height: 100vh; padding-bottom: 100px; }
 
   header {
     background: linear-gradient(150deg, #0a2e0a 0%, #145214 40%, #1e7a1e 100%);
@@ -21,18 +21,6 @@
     width:52px; height:52px; display:flex; align-items:center; justify-content:center; font-size:28px; }
   .header-titles h1 { font-size:20px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; text-align:left; }
   .header-titles p { font-size:11px; opacity:0.65; text-align:left; margin-top:2px; }
-  .header-divider { height:1px; background:rgba(255,255,255,0.12); margin:14px 0 12px; position:relative; z-index:1; }
-  .header-bottom { display:flex; align-items:center; justify-content:space-between; position:relative; z-index:1; }
-  .header-badge { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.18); border-radius:20px;
-    padding:5px 12px; font-size:11px; font-weight:600; }
-  .btn-refresh { display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.12);
-    border:1.5px solid rgba(255,255,255,0.25); color:white; padding:7px 14px; border-radius:20px;
-    font-size:12px; font-weight:700; cursor:pointer; transition:all 0.15s; }
-  .btn-refresh:active { background:rgba(255,255,255,0.25); transform:scale(0.95); }
-  .btn-refresh.loading { opacity:0.7; pointer-events:none; }
-  .btn-refresh .refresh-icon { display:inline-block; transition:transform 0.4s; }
-  .btn-refresh.loading .refresh-icon { animation:spin 0.8s linear infinite; }
-  @keyframes spin { from{transform:rotate(0);} to{transform:rotate(360deg);} }
 
   #estado-conexion { text-align:center; padding:8px 16px; font-size:12px; font-weight:600; }
   .online { background:#d4edda; color:#1a6b2a; }
@@ -42,17 +30,18 @@
   .loading-spinner { width:40px; height:40px; border:3px solid #e0e0e0; border-top-color:#1e7a1e;
     border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px; }
   .loading-text { font-size:14px; font-weight:500; color:#555; }
+  @keyframes spin { from{transform:rotate(0);} to{transform:rotate(360deg);} }
 
   /* TABS */
-  .tabs { max-width:480px; margin:0 auto; padding:14px 14px 0; display:flex; gap:8px; }
-  .tab { flex:1; padding:12px; text-align:center; background:#dde7dd; border:none; border-radius:10px 10px 0 0;
-    font-size:13px; font-weight:700; color:#6a8a6a; cursor:pointer; font-family:inherit; transition:all 0.15s; position:relative; }
+  .tabs { max-width:480px; margin:0 auto; padding:14px 14px 0; display:flex; gap:6px; }
+  .tab { flex:1; padding:10px 4px; text-align:center; background:#dde7dd; border:none; border-radius:10px 10px 0 0;
+    font-size:11px; font-weight:700; color:#6a8a6a; cursor:pointer; font-family:inherit; transition:all 0.15s; position:relative; }
   .tab.activa { background:white; color:#1a6b1a; box-shadow:0 -2px 8px rgba(0,0,0,0.05); }
-  .tab .contador { display:inline-block; background:#e6a817; color:white; border-radius:10px; padding:1px 7px;
-    font-size:11px; margin-left:4px; }
+  .tab .contador { display:inline-block; background:#e6a817; color:white; border-radius:10px; padding:1px 6px;
+    font-size:10px; margin-left:3px; }
   .tab.activa .contador { background:#1e7a1e; }
 
-  .form-container { max-width:480px; margin:0 auto; padding:14px 14px 30px; }
+  .form-container { max-width:480px; margin:0 auto; padding:14px 14px 0; }
   .vista { display:none; }
   .vista.activa { display:block; }
 
@@ -83,21 +72,18 @@
   .especie-header { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
   .especie-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
   .especie-nombre { font-size:13px; font-weight:700; color:#2a2a2a; font-style:italic; }
-  .especie-tag { margin-left:auto; background:#e8f5e8; color:#1a6b1a; font-size:10px; font-weight:700;
-    padding:2px 8px; border-radius:10px; }
+  .especie-tag { margin-left:auto; background:#e8f5e8; color:#1a6b1a; font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; }
   .conteo-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .conteo-item { background:white; border-radius:10px; padding:10px 12px; border:1px solid #e0e0e0; }
-  .conteo-label { font-size:10px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:0.5px;
-    margin-bottom:6px; display:flex; align-items:center; gap:4px; }
-  .conteo-item input { border:none; background:transparent; font-size:22px; font-weight:800; color:#1a6b1a;
-    padding:0; text-align:center; width:100%; }
+  .conteo-label { font-size:10px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+  .conteo-item input { border:none; background:transparent; font-size:22px; font-weight:800; color:#1a6b1a; padding:0; text-align:center; width:100%; }
   .conteo-item input:focus { outline:none; box-shadow:none; background:transparent; }
 
   .btn-guardar { width:100%; padding:18px; background:linear-gradient(135deg, #0a2e0a 0%, #1e7a1e 100%);
     color:white; border:none; border-radius:14px; font-size:15px; font-weight:800; cursor:pointer;
     letter-spacing:1px; text-transform:uppercase; box-shadow:0 8px 20px rgba(30,122,30,0.35);
     transition:all 0.15s; margin-bottom:4px; display:flex; align-items:center; justify-content:center; gap:10px; font-family:inherit; }
-  .btn-guardar:active { transform:scale(0.97); box-shadow:0 4px 10px rgba(30,122,30,0.25); }
+  .btn-guardar:active { transform:scale(0.97); }
 
   #mensaje { margin-top:12px; padding:14px 16px; border-radius:12px; text-align:center; font-size:13px; font-weight:600; display:none; }
   .exito { background:#d4edda; color:#1a6b2a; border:1px solid #b8dfc4; }
@@ -112,8 +98,7 @@
   .registro-info { flex:1; }
   .registro-lugar { font-weight:700; font-size:14px; color:#222; }
   .registro-detalle { font-size:12px; color:#777; margin-top:2px; }
-  .registro-total { background:#e8f5e8; color:#1a6b1a; font-weight:800; font-size:14px;
-    padding:6px 12px; border-radius:10px; flex-shrink:0; }
+  .registro-total { background:#e8f5e8; color:#1a6b1a; font-weight:800; font-size:14px; padding:6px 12px; border-radius:10px; flex-shrink:0; }
 
   .vacio { text-align:center; padding:40px 20px; color:#999; font-size:14px; }
   .vacio-icono { font-size:36px; margin-bottom:10px; opacity:0.5; }
@@ -123,7 +108,39 @@
     text-transform:uppercase; letter-spacing:0.5px; font-family:inherit; margin-bottom:14px;
     display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.15s; }
   .btn-actualizar-vista:active { transform:scale(0.97); }
-  .btn-actualizar-vista.loading .refresh-icon { animation:spin 0.8s linear infinite; }
+
+  /* BOTÓN FLOTANTE */
+  .fab {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, #0a2e0a, #1e7a1e);
+    color: white; border: none; cursor: pointer; font-size: 26px;
+    box-shadow: 0 6px 20px rgba(30,122,30,0.5);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; font-family: inherit;
+  }
+  .fab:active { transform: scale(0.9); box-shadow: 0 3px 10px rgba(30,122,30,0.4); }
+  .fab.loading { animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 6px 20px rgba(30,122,30,0.5);} 50%{box-shadow:0 6px 30px rgba(30,122,30,0.9);} }
+  .fab-label { position:fixed; bottom:94px; right:14px; background:#0a2e0a; color:white;
+    font-size:11px; font-weight:700; padding:5px 10px; border-radius:8px; z-index:999; white-space:nowrap; }
+
+  /* PESTAÑA CONTROL */
+  .control-card { background:white; border-radius:16px; padding:20px; margin-bottom:12px;
+    box-shadow:0 1px 6px rgba(0,0,0,0.06); }
+  .control-titulo { font-size:12px; font-weight:800; color:#1a6b1a; text-transform:uppercase;
+    letter-spacing:1px; margin-bottom:16px; padding-bottom:10px; border-bottom:1.5px solid #e8f5e8; }
+  .btn-control { width:100%; padding:16px; border:none; border-radius:12px; font-size:14px;
+    font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.15s; margin-bottom:10px;
+    display:flex; align-items:center; justify-content:center; gap:10px; }
+  .btn-control:last-child { margin-bottom:0; }
+  .btn-control:active { transform:scale(0.97); }
+  .btn-verde { background:linear-gradient(135deg, #0a2e0a, #1e7a1e); color:white; }
+  .btn-amarillo { background:linear-gradient(135deg, #9a6f00, #e6a817); color:white; }
+  .info-control { background:#f5f9f5; border-radius:10px; padding:14px; font-size:13px; color:#555; line-height:1.8; }
+  .info-control strong { color:#1a6b1a; }
+  .refresh-spin { display:inline-block; }
+  .loading .refresh-spin { animation:spin 0.8s linear infinite; }
 </style>
 </head>
 <body>
@@ -132,16 +149,9 @@
   <div class="header-top">
     <div class="header-icon-wrap">🪰</div>
     <div class="header-titles">
-      <h1>AgroAmérica</h1>
-      <p>AgroAmérica — Arequipa, Perú</p>
+      <h1>América Monitor</h1>
+      <p>Fundo Muto — Arequipa, Perú</p>
     </div>
-  </div>
-  <div class="header-divider"></div>
-  <div class="header-bottom">
-    <span class="header-badge">🌿 Monitoreo de Plagas</span>
-    <button class="btn-refresh" id="btn-refresh" onclick="actualizarListas()">
-      <span class="refresh-icon">↻</span><span>Actualizar</span>
-    </button>
   </div>
 </header>
 
@@ -157,13 +167,14 @@
   <!-- PESTAÑAS -->
   <div class="tabs">
     <button class="tab activa" id="tab-form" onclick="cambiarVista('form')">📝 Registrar</button>
-    <button class="tab" id="tab-pendientes" onclick="cambiarVista('pendientes')">⏳ Pendientes <span class="contador" id="cont-pendientes">0</span></button>
+    <button class="tab" id="tab-pendientes" onclick="cambiarVista('pendientes')">⏳ Pend. <span class="contador" id="cont-pendientes">0</span></button>
     <button class="tab" id="tab-enviados" onclick="cambiarVista('enviados')">✅ Enviados</button>
+    <button class="tab" id="tab-control" onclick="cambiarVista('control')">⚙️ Control</button>
   </div>
 
   <div class="form-container">
 
-    <!-- VISTA FORMULARIO -->
+    <!-- FORMULARIO -->
     <div class="vista activa" id="vista-form">
       <div class="card">
         <div class="card-title"><div class="card-title-icon">📋</div>Información General</div>
@@ -186,36 +197,55 @@
         <div class="info-row" id="gps-status">📍 Obteniendo ubicación GPS...</div>
         <div class="cache-info" id="cache-info"></div>
       </div>
-
       <div class="card">
         <div class="card-title"><div class="card-title-icon">🦟</div>Conteo de Individuos</div>
         <div id="especies-container"></div>
       </div>
-
       <div class="card">
         <div class="card-title"><div class="card-title-icon">📝</div>Observaciones</div>
         <textarea id="observacion" rows="3" placeholder="Condiciones del campo, estado de la trampa..."></textarea>
       </div>
-
       <button class="btn-guardar" onclick="guardarRegistro()"><span>💾</span><span>Guardar Registro</span></button>
       <div id="mensaje"></div>
     </div>
 
-    <!-- VISTA PENDIENTES -->
+    <!-- PENDIENTES -->
     <div class="vista" id="vista-pendientes">
       <div id="items-pendientes"></div>
     </div>
 
-    <!-- VISTA ENVIADOS -->
+    <!-- ENVIADOS -->
     <div class="vista" id="vista-enviados">
       <button class="btn-actualizar-vista" id="btn-actualizar-enviados" onclick="cargarEnviados()">
-        <span class="refresh-icon">↻</span><span>Actualizar enviados</span>
+        <span class="refresh-spin">↻</span><span>Actualizar enviados de hoy</span>
       </button>
       <div id="items-enviados"></div>
     </div>
 
+    <!-- CONTROL -->
+    <div class="vista" id="vista-control">
+      <div class="control-card">
+        <div class="control-titulo">⚙️ Control del Aplicativo</div>
+        <button class="btn-control btn-verde" id="btn-actualizar-listas" onclick="actualizarListas()">
+          <span class="refresh-spin" id="spin-listas">↻</span>
+          <span>Actualizar listas (lugares, trampas, especies)</span>
+        </button>
+        <button class="btn-control btn-amarillo" onclick="limpiarCache()">
+          🗑️ Limpiar caché de listas
+        </button>
+      </div>
+      <div class="control-card">
+        <div class="control-titulo">📊 Estado del Sistema</div>
+        <div class="info-control" id="info-sistema">Cargando...</div>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<!-- BOTÓN FLOTANTE -->
+<div class="fab-label" id="fab-label">Sincronizar y refrescar</div>
+<button class="fab" id="fab-btn" onclick="refrescarTodo()">🔄</button>
 
 <script>
   const API = "https://campo-app-qau7.onrender.com";
@@ -228,11 +258,14 @@
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos => {
       lat = pos.coords.latitude; lon = pos.coords.longitude;
-      document.getElementById('gps-status').innerHTML = `📍 GPS capturado: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+      document.getElementById('gps-status').innerHTML = `📍 GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
     }, () => { document.getElementById('gps-status').innerHTML = '📍 GPS no disponible'; });
   }
 
   document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+
+  // Ocultar label del FAB después de 3 segundos
+  setTimeout(() => { document.getElementById('fab-label').style.display = 'none'; }, 3000);
 
   // ── PESTAÑAS ──
   function cambiarVista(vista) {
@@ -242,6 +275,32 @@
     document.getElementById('tab-' + vista).classList.add('activa');
     if (vista === 'pendientes') mostrarPendientes();
     if (vista === 'enviados') cargarEnviados();
+    if (vista === 'control') actualizarInfoSistema();
+  }
+
+  // ── BOTÓN FLOTANTE: sincroniza + refresca todo ──
+  async function refrescarTodo() {
+    const fab = document.getElementById('fab-btn');
+    fab.classList.add('loading');
+    fab.textContent = '⏳';
+    try {
+      await sincronizarPendientes();
+      await actualizarContadorPendientes();
+      // Refrescar la vista activa
+      const vistaActiva = document.querySelector('.vista.activa');
+      if (vistaActiva) {
+        const id = vistaActiva.id;
+        if (id === 'vista-pendientes') await mostrarPendientes();
+        if (id === 'vista-enviados') await cargarEnviados();
+        if (id === 'vista-control') actualizarInfoSistema();
+      }
+      mostrarMensaje('✅ Todo actualizado', 'exito');
+    } catch(e) {
+      mostrarMensaje('⚠️ Error al actualizar', 'error');
+    } finally {
+      fab.classList.remove('loading');
+      fab.textContent = '🔄';
+    }
   }
 
   // ── LISTAS ──
@@ -269,7 +328,6 @@
     document.getElementById('app-contenido').style.display = 'block';
   }
 
-  // Descarga listas del servidor y las guarda en caché. Devuelve true si lo logró.
   async function descargarListas() {
     const [rL, rT, rE] = await Promise.all([
       fetch(`${API}/lugares`).then(r=>r.json()),
@@ -280,38 +338,55 @@
       lugares:rL.lugares, tipos:rT.tipos_trampa, especies:rE.especies, fecha:new Date().toISOString()
     }));
     pintarListas(rL.lugares, rT.tipos_trampa, rE.especies);
-    return true;
   }
 
-  // Botón manual: fuerza descarga del servidor
   async function actualizarListas() {
-    if (!navigator.onLine) { mostrarMensaje('🟡 Sin internet. No se pueden actualizar las listas.', 'offline'); return; }
-    const btn = document.getElementById('btn-refresh'); btn.classList.add('loading');
+    if (!navigator.onLine) { mostrarMensaje('🟡 Sin internet.', 'offline'); return; }
+    const btn = document.getElementById('btn-actualizar-listas');
+    const spin = document.getElementById('spin-listas');
+    btn.classList.add('loading'); spin.style.animation = 'spin 0.8s linear infinite';
     try {
       await descargarListas();
-      const ci=document.getElementById('cache-info'); ci.textContent='✅ Listas actualizadas desde el servidor'; ci.classList.add('visible');
+      const ci=document.getElementById('cache-info'); ci.textContent='✅ Listas actualizadas'; ci.classList.add('visible');
       mostrarMensaje('✅ Listas actualizadas correctamente', 'exito');
-    } catch(e) { mostrarMensaje('⚠️ No se pudieron actualizar las listas.', 'error'); }
-    finally { btn.classList.remove('loading'); }
+      actualizarInfoSistema();
+    } catch(e) { mostrarMensaje('⚠️ Error al actualizar listas.', 'error'); }
+    finally { btn.classList.remove('loading'); spin.style.animation = ''; }
   }
 
-  // Al arrancar: usa la caché si existe (rápido, sin esperar al servidor).
-  // Solo descarga del servidor si NO hay caché (primera vez).
+  function limpiarCache() {
+    localStorage.removeItem('cache_listas');
+    mostrarMensaje('🗑️ Caché limpiada. Abre la app con internet para recargar.', 'offline');
+    actualizarInfoSistema();
+  }
+
+  async function actualizarInfoSistema() {
+    const p = await obtenerPendientes();
+    const cache = localStorage.getItem('cache_listas');
+    const fechaCache = cache ? JSON.parse(cache).fecha?.slice(0,16).replace('T',' ') : 'Sin caché';
+    const conexion = navigator.onLine ? '🟢 Conectado' : '🟡 Sin internet';
+    document.getElementById('info-sistema').innerHTML = `
+      <strong>Conexión:</strong> ${conexion}<br>
+      <strong>Pendientes sin enviar:</strong> ${p.length}<br>
+      <strong>Listas actualizadas:</strong> ${fechaCache}<br>
+      <strong>Lugares, trampas y especies:</strong> ${cache ? 'En caché ✅' : 'Sin caché ⚠️'}
+    `;
+  }
+
   async function cargarListas() {
     const cache = localStorage.getItem('cache_listas');
     if (cache) {
       const d = JSON.parse(cache);
       pintarListas(d.lugares, d.tipos, d.especies);
       const ci=document.getElementById('cache-info');
-      ci.textContent = `📋 Listas guardadas (${d.fecha ? d.fecha.slice(0,10):'?'}) · usa ↻ para actualizar`;
+      ci.textContent = `📋 Listas del ${d.fecha ? d.fecha.slice(0,10):'?'} · actualiza en ⚙️ Control`;
       ci.classList.add('visible');
     } else {
-      // Primera vez: necesita internet
       try {
         await descargarListas();
         const ci=document.getElementById('cache-info'); ci.textContent='✅ Listas descargadas'; ci.classList.add('visible');
       } catch(e) {
-        document.getElementById('cargando').innerHTML = '<div style="font-size:32px;margin-bottom:12px;">⚠️</div><div class="loading-text">Necesitas internet la primera vez para descargar las listas.</div>';
+        document.getElementById('cargando').innerHTML = '<div style="font-size:32px;margin-bottom:12px;">⚠️</div><div class="loading-text">Necesitas internet la primera vez. Ve a ⚙️ Control para actualizar.</div>';
       }
     }
   }
@@ -446,13 +521,9 @@
       }
       if (n > 0) {
         mostrarMensaje(`✅ ${n} registro(s) sincronizados`, 'exito');
-        // Refrescar TODO automáticamente sin cerrar la app
         await actualizarContadorPendientes();
         await mostrarPendientes();
-        // Si la pestaña de enviados está visible, recargarla
-        if (document.getElementById('vista-enviados').classList.contains('activa')) {
-          await cargarEnviados();
-        }
+        if (document.getElementById('vista-enviados').classList.contains('activa')) await cargarEnviados();
       }
     } finally { sincronizando = false; }
   }
@@ -470,7 +541,6 @@
                         hembras: parseInt(document.getElementById(`hembras_${i}`).value)||0 };
     });
     const datos = { fecha, lugar, lote, tipo_trampa, capturas, coordenadas_lat:lat, coordenadas_lon:lon, observacion };
-
     if (navigator.onLine) {
       try {
         mostrarMensaje('🔄 Enviando datos...', 'offline');
