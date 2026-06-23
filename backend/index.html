@@ -254,30 +254,71 @@
   setTimeout(() => { document.getElementById('fab-label').style.display = 'none'; }, 3000);
 
   // ── GPS: se captura fresco en cada guardado ──
-  function obtenerGPS() {
+ function obtenerGPS() {
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
         document.getElementById('gps-status').innerHTML = '📍 GPS no disponible en este dispositivo';
         resolve(null);
         return;
       }
+
       const gpsDiv = document.getElementById('gps-status');
+      const MAX_LECTURAS = 4;        // cuántas lecturas tomar
+      const PRECISION_MINIMA = 30;   // metros: si accuracy > esto, la descartamos
+      const TIMEOUT_TOTAL = 15000;   // tiempo máximo total en ms
+
+      let lecturas = [];
+      let watchId = null;
+      let timeoutId = null;
+
       gpsDiv.className = 'info-row buscando';
-      gpsDiv.innerHTML = '📍 Obteniendo ubicación GPS...';
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          lat = pos.coords.latitude;
-          lon = pos.coords.longitude;
-          gpsDiv.className = 'info-row';
-          gpsDiv.innerHTML = `📍 GPS capturado: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-          resolve({ lat, lon });
-        },
-        () => {
+      gpsDiv.innerHTML = '📍 Buscando señal GPS...';
+
+      function terminar() {
+        if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+        if (timeoutId !== null) clearTimeout(timeoutId);
+
+        if (lecturas.length === 0) {
           gpsDiv.className = 'info-row';
           gpsDiv.innerHTML = '📍 GPS no disponible — guardando sin coordenadas';
           resolve(null);
+          return;
+        }
+
+        // Ordenar por precisión (menor accuracy = mejor)
+        lecturas.sort((a, b) => a.accuracy - b.accuracy);
+        const mejor = lecturas[0];
+
+        gpsDiv.className = 'info-row';
+        gpsDiv.innerHTML = `📍 GPS: ${mejor.lat.toFixed(5)}, ${mejor.lon.toFixed(5)} (±${Math.round(mejor.accuracy)}m)`;
+        resolve({ lat: mejor.lat, lon: mejor.lon, accuracy: mejor.accuracy });
+      }
+
+      // Timeout general
+      timeoutId = setTimeout(terminar, TIMEOUT_TOTAL);
+
+      // Vigilar posición continuamente
+      watchId = navigator.geolocation.watchPosition(
+        pos => {
+          const accuracy = pos.coords.accuracy;
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+
+          gpsDiv.innerHTML = `📍 Buscando... (±${Math.round(accuracy)}m, lectura ${lecturas.length + 1}/${MAX_LECTURAS})`;
+
+          // Guardar esta lectura
+          lecturas.push({ lat, lon, accuracy });
+
+          // Si ya tenemos suficientes lecturas buenas, terminamos
+          const buenas = lecturas.filter(l => l.accuracy <= PRECISION_MINIMA);
+          if (buenas.length >= 2 || lecturas.length >= MAX_LECTURAS) {
+            terminar();
+          }
         },
-        { timeout: 8000, maximumAge: 0, enableHighAccuracy: true }
+        () => {
+          terminar();
+        },
+        { enableHighAccuracy: true, maximumAge: 0, timeout: TIMEOUT_TOTAL }
       );
     });
   }
