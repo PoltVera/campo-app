@@ -204,7 +204,7 @@
           <label>Tipo de Trampa</label>
           <select id="tipo_trampa"><option value="">— Seleccionar tipo —</option></select>
         </div>
-        <div class="info-row" id="gps-status">📍 GPS listo — se capturará al guardar</div>
+        <div class="gps-semaforo gps-buscando" id="gps-status"><div class="gps-punto punto-gris"></div> GPS listo — se capturará al guardar</div>
         <div class="cache-info" id="cache-info"></div>
       </div>
 
@@ -542,7 +542,7 @@ function clasificarGPS(accuracy) {
     }).join('');
   }
 
-  async function cargarEnviados() {
+ async function cargarEnviados() {
     const btn = document.getElementById('btn-actualizar-enviados');
     const cont = document.getElementById('items-enviados');
     if (!navigator.onLine) {
@@ -552,19 +552,41 @@ function clasificarGPS(accuracy) {
     if (btn) btn.classList.add('loading');
     try {
       const res = await fetch(`${API}/registros_hoy`).then(r=>r.json());
-      const registros = res.registros;
-      if (registros.length === 0) {
+      const resumen = res.resumen;
+      if (!resumen || resumen.length === 0) {
         cont.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div>Aún no hay registros enviados hoy.</div>';
       } else {
-        cont.innerHTML = registros.map(r => `
-          <div class="registro-card enviado">
-            <div class="registro-icono">✅</div>
-            <div class="registro-info">
-              <div class="registro-lugar">${r.lugar} <span style="color:#999;font-weight:600;">#${r.numero_trampa}</span></div>
-              <div class="registro-detalle">${r.tipo_trampa} · ${r.hora}</div>
-            </div>
-            <div class="registro-total">${r.total}</div>
-          </div>`).join('');
+        let totalTrampas = 0, totalCapturas = 0;
+        let filas = resumen.map(r => {
+          totalTrampas += r.num_trampas;
+          totalCapturas += r.total_capturas;
+          return `<tr>
+            <td class="lugar-cel">${r.lugar}</td>
+            <td>${r.tipo_trampa}</td>
+            <td class="num-cel">${r.num_trampas}</td>
+            <td class="cap-cel">${r.total_capturas}</td>
+          </tr>`;
+        }).join('');
+
+        cont.innerHTML = `
+          <table class="tabla-resumen">
+            <thead>
+              <tr>
+                <th>Lugar</th>
+                <th>Tipo</th>
+                <th style="text-align:center;">N° Tramp.</th>
+                <th style="text-align:center;">Capturas</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filas}
+              <tr class="tabla-total-row">
+                <td colspan="2">TOTAL</td>
+                <td style="text-align:center;">${totalTrampas}</td>
+                <td style="text-align:center;">${totalCapturas}</td>
+              </tr>
+            </tbody>
+          </table>`;
       }
     } catch(e) {
       cont.innerHTML = '<div class="vacio"><div class="vacio-icono">⚠️</div>Error al cargar. Intenta de nuevo.</div>';
@@ -673,14 +695,15 @@ function clasificarGPS(accuracy) {
     setTimeout(() => div.style.display = 'none', 6000);
   }
 
-  function limpiarFormulario() {
+function limpiarFormulario() {
     document.getElementById('lugar').value = '';
     document.getElementById('lote').value = '';
     document.getElementById('tipo_trampa').value = '';
     document.getElementById('observacion').value = '';
     document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-    document.getElementById('gps-status').innerHTML = '📍 GPS listo — se capturará al guardar';
-    document.getElementById('gps-status').className = 'info-row';
+    const gpsDiv = document.getElementById('gps-status');
+    gpsDiv.className = 'gps-semaforo gps-buscando';
+    gpsDiv.innerHTML = '<div class="gps-punto punto-gris"></div> GPS listo — se capturará al guardar';
     especiesActivas.forEach((_,i) => {
       document.getElementById(`machos_${i}`).value = 0;
       document.getElementById(`hembras_${i}`).value = 0;
