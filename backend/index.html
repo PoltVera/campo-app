@@ -133,6 +133,25 @@
   .info-control { background:#f5f9f5; border-radius:10px; padding:14px; font-size:13px; color:#555; line-height:1.8; }
   .info-control strong { color:#1a6b1a; }
   .refresh-spin { display:inline-block; }
+  .gps-semaforo { display:flex; align-items:center; gap:8px; margin-top:10px; padding:10px 12px; border-radius:8px; font-size:12px; font-weight:700; transition:all 0.3s; }
+  .gps-buena { background:#d4edda; color:#155724; }
+  .gps-regular { background:#fff3cd; color:#856404; }
+  .gps-mala { background:#f8d7da; color:#721c24; }
+  .gps-buscando { background:#e2e8f0; color:#475569; }
+  .gps-punto { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+  .punto-verde { background:#28a745; box-shadow:0 0 6px #28a745; }
+  .punto-amarillo { background:#e6a817; box-shadow:0 0 6px #e6a817; }
+  .punto-rojo { background:#dc3545; box-shadow:0 0 6px #dc3545; animation:parpadeo 1s infinite; }
+  .punto-gris { background:#94a3b8; }
+  @keyframes parpadeo { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  .tabla-resumen { width:100%; background:white; border-radius:12px; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.06); border-collapse:collapse; margin-bottom:12px; }
+  .tabla-resumen th { background:#0a2e0a; color:white; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; padding:10px 8px; text-align:left; }
+  .tabla-resumen td { padding:10px 8px; font-size:13px; color:#333; border-bottom:1px solid #f0f0f0; }
+  .tabla-resumen tr:last-child td { border-bottom:none; }
+  .tabla-resumen .lugar-cel { font-weight:700; color:#1a6b1a; }
+  .tabla-resumen .num-cel { text-align:center; font-weight:800; color:#1a6b1a; }
+  .tabla-resumen .cap-cel { text-align:center; background:#e8f5e8; font-weight:700; }
+  .tabla-total-row td { background:#f5f9f5; font-weight:800; color:#0a2e0a; border-top:2px solid #e0ede0; }
 </style>
 </head>
 <body>
@@ -254,70 +273,67 @@
   setTimeout(() => { document.getElementById('fab-label').style.display = 'none'; }, 3000);
 
   // ── GPS: se captura fresco en cada guardado ──
- function obtenerGPS() {
+function clasificarGPS(accuracy) {
+    if (accuracy <= 15) return { clase:'gps-buena', punto:'punto-verde', texto:'Excelente', emoji:'🟢' };
+    if (accuracy <= 35) return { clase:'gps-regular', punto:'punto-amarillo', texto:'Aceptable', emoji:'🟡' };
+    return { clase:'gps-mala', punto:'punto-rojo', texto:'Baja precisión', emoji:'🔴' };
+  }
+
+  function obtenerGPS() {
     return new Promise((resolve) => {
+      const gpsDiv = document.getElementById('gps-status');
       if (!navigator.geolocation) {
-        document.getElementById('gps-status').innerHTML = '📍 GPS no disponible en este dispositivo';
+        gpsDiv.className = 'gps-semaforo gps-mala';
+        gpsDiv.innerHTML = '<div class="gps-punto punto-rojo"></div> GPS no disponible en este dispositivo';
         resolve(null);
         return;
       }
 
-      const gpsDiv = document.getElementById('gps-status');
-      const MAX_LECTURAS = 4;        // cuántas lecturas tomar
-      const PRECISION_MINIMA = 30;   // metros: si accuracy > esto, la descartamos
-      const TIMEOUT_TOTAL = 15000;   // tiempo máximo total en ms
-
+      const MAX_LECTURAS = 6;
+      const PRECISION_OBJETIVO = 15;
+      const TIMEOUT_TOTAL = 18000;
       let lecturas = [];
       let watchId = null;
       let timeoutId = null;
 
-      gpsDiv.className = 'info-row buscando';
-      gpsDiv.innerHTML = '📍 Buscando señal GPS...';
+      gpsDiv.className = 'gps-semaforo gps-buscando';
+      gpsDiv.innerHTML = '<div class="gps-punto punto-gris"></div> Buscando señal GPS...';
 
       function terminar() {
         if (watchId !== null) navigator.geolocation.clearWatch(watchId);
         if (timeoutId !== null) clearTimeout(timeoutId);
 
         if (lecturas.length === 0) {
-          gpsDiv.className = 'info-row';
-          gpsDiv.innerHTML = '📍 GPS no disponible — guardando sin coordenadas';
+          gpsDiv.className = 'gps-semaforo gps-mala';
+          gpsDiv.innerHTML = '<div class="gps-punto punto-rojo"></div> Sin señal GPS — guardando sin coordenadas';
           resolve(null);
           return;
         }
 
-        // Ordenar por precisión (menor accuracy = mejor)
         lecturas.sort((a, b) => a.accuracy - b.accuracy);
         const mejor = lecturas[0];
+        const cls = clasificarGPS(mejor.accuracy);
 
-        gpsDiv.className = 'info-row';
-        gpsDiv.innerHTML = `📍 GPS: ${mejor.lat.toFixed(5)}, ${mejor.lon.toFixed(5)} (±${Math.round(mejor.accuracy)}m)`;
+        gpsDiv.className = 'gps-semaforo ' + cls.clase;
+        gpsDiv.innerHTML = `<div class="gps-punto ${cls.punto}"></div> ${cls.emoji} ${cls.texto} (±${Math.round(mejor.accuracy)}m) · ${mejor.lat.toFixed(5)}, ${mejor.lon.toFixed(5)}`;
         resolve({ lat: mejor.lat, lon: mejor.lon, accuracy: mejor.accuracy });
       }
 
-      // Timeout general
       timeoutId = setTimeout(terminar, TIMEOUT_TOTAL);
 
-      // Vigilar posición continuamente
       watchId = navigator.geolocation.watchPosition(
         pos => {
           const accuracy = pos.coords.accuracy;
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
+          lecturas.push({ lat: pos.coords.latitude, lon: pos.coords.longitude, accuracy });
+          const cls = clasificarGPS(accuracy);
+          gpsDiv.className = 'gps-semaforo gps-buscando';
+          gpsDiv.innerHTML = `<div class="gps-punto punto-gris"></div> Afinando... ${cls.emoji} ±${Math.round(accuracy)}m (${lecturas.length}/${MAX_LECTURAS})`;
 
-          gpsDiv.innerHTML = `📍 Buscando... (±${Math.round(accuracy)}m, lectura ${lecturas.length + 1}/${MAX_LECTURAS})`;
-
-          // Guardar esta lectura
-          lecturas.push({ lat, lon, accuracy });
-
-          // Si ya tenemos suficientes lecturas buenas, terminamos
-          const buenas = lecturas.filter(l => l.accuracy <= PRECISION_MINIMA);
-          if (buenas.length >= 2 || lecturas.length >= MAX_LECTURAS) {
-            terminar();
-          }
+          // Si conseguimos una lectura excelente, terminamos ya
+          if (accuracy <= PRECISION_OBJETIVO) { terminar(); return; }
+          if (lecturas.length >= MAX_LECTURAS) terminar();
         },
-        () => {
-          terminar();
-        },
+        () => { terminar(); },
         { enableHighAccuracy: true, maximumAge: 0, timeout: TIMEOUT_TOTAL }
       );
     });

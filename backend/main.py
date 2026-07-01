@@ -84,26 +84,27 @@ def registros_hoy():
     con = get_con()
     cur = con.cursor()
     cur.execute("""
-        SELECT lugar, tipo_trampa, numero_trampa,
-               machos_ceratitis, hembras_ceratitis,
-               machos_anastrepha, hembras_anastrepha, creado_en
+        SELECT lugar, tipo_trampa,
+               COUNT(*) AS num_trampas,
+               SUM(COALESCE(machos_ceratitis,0) + COALESCE(hembras_ceratitis,0) +
+                   COALESCE(machos_anastrepha,0) + COALESCE(hembras_anastrepha,0)) AS total_capturas
         FROM trampas_moscas
         WHERE fecha = (NOW() AT TIME ZONE 'America/Lima')::date
-        ORDER BY creado_en DESC;
+        GROUP BY lugar, tipo_trampa
+        ORDER BY lugar, tipo_trampa;
     """)
     filas = cur.fetchall()
     cur.close()
     con.close()
-    registros = []
+    resumen = []
     for f in filas:
-        registros.append({
+        resumen.append({
             "lugar": f[0],
             "tipo_trampa": f[1],
-            "numero_trampa": f[2],
-            "total": (f[3] or 0) + (f[4] or 0) + (f[5] or 0) + (f[6] or 0),
-            "hora": f[7].strftime("%H:%M") if f[7] else ""
+            "num_trampas": f[2],
+            "total_capturas": int(f[3]) if f[3] else 0
         })
-    return {"registros": registros}
+    return {"resumen": resumen}
 
 @app.post("/registro")
 def guardar_registro(data: RegistroTrampa):
